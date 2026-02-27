@@ -1,0 +1,178 @@
+﻿{% extends 'base.html' %}
+
+{% block title %}Yeni Sikayet | Sikayet Sistemi{% endblock %}
+
+{% block content %}
+<style>
+   .wrap {
+      max-width: 860px;
+      margin: 0 auto;
+   }
+
+   .head {
+      margin-bottom: 14px;
+   }
+
+   .head h1 {
+      margin: 0;
+      color: var(--color-primary);
+   }
+
+   .head p {
+      margin: 6px 0 0;
+      color: var(--muted);
+   }
+
+   .form-box {
+      padding: 18px;
+   }
+
+   .grid {
+      display: grid;
+      gap: 12px;
+   }
+
+   .label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--color-primary);
+   }
+
+   input[type="text"],
+   textarea,
+   select {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid rgba(64, 81, 59, 0.24);
+      padding: 10px 12px;
+      font: inherit;
+      background: #fff;
+   }
+
+   textarea {
+      min-height: 120px;
+      resize: vertical;
+   }
+
+   input[type="text"]:focus,
+   textarea:focus,
+   select:focus {
+      outline: 2px solid rgba(98, 129, 65, 0.18);
+      border-color: var(--color-secondary);
+   }
+
+   .two {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+   }
+
+   .location {
+      background: rgba(229, 217, 182, 0.25);
+      border: 1px dashed rgba(64, 81, 59, 0.25);
+      border-radius: 12px;
+      padding: 12px;
+   }
+
+   .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+   }
+
+   .btn {
+      border: 0;
+      border-radius: 999px;
+      padding: 11px 16px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+   }
+
+   .btn-primary {
+      background: var(--color-primary);
+      color: #fff;
+   }
+
+   .btn-secondary {
+      background: #fff;
+      color: var(--color-primary);
+      border: 1px solid rgba(64, 81, 59, 0.28);
+   }
+
+   .error {
+      color: #b91c1c;
+      font-size: 0.86rem;
+      margin-top: 4px;
+   }
+
+   @media (max-width: 700px) {
+      .two { grid-template-columns: 1fr; }
+   }
+</style>
+
+<div class="wrap">
+   <section class="head">
+      <h1>Yeni Sikayet Olustur</h1>
+      <p>Sorunu ne kadar net yazarsan, cozum sureci o kadar hizli ilerler.</p>
+   </section>
+
+   <form method="post" class="card form-box grid">
+      {% csrf_token %}
+
+      <div>
+         <label class="label" for="{{ form.title.id_for_label }}">Sikayet Basligi</label>
+         {{ form.title }}
+         {% for error in form.title.errors %}<div class="error">{{ error }}</div>{% endfor %}
+      </div>
+
+      <div>
+         <label class="label" for="{{ form.description.id_for_label }}">Detayli Aciklama</label>
+         {{ form.description }}
+         {% for error in form.description.errors %}<div class="error">{{ error }}</div>{% endfor %}
+      </div>
+
+      <div class="two">
+         <div>
+            <label class="label" for="{{ form.category.id_for_label }}">Kategori</label>
+            {{ form.category }}
+            {% for error in form.category.errors %}<div class="error">{{ error }}</div>{% endfor %}
+         </div>
+         <div>
+            <label class="label" for="{{ form.priority.id_for_label }}">Oncelik</label>
+            {{ form.priority }}
+            {% for error in form.priority.errors %}<div class="error">{{ error }}</div>{% endfor %}
+         </div>
+      </div>
+
+      <section class="location">
+         <h3 style="margin:0 0 10px; color: var(--color-primary);">Konum Bilgisi</h3>
+         <div class="two">
+            <div>
+               <label class="label" for="{{ form.city.id_for_label }}">Il</label>
+               {{ form.city }}
+               {% for error in form.city.errors %}<div class="error">{{ error }}</div>{% endfor %}
+            </div>
+            <div>
+               <label class="label" for="{{ form.district.id_for_label }}">Ilce</label>
+               {{ form.district }}
+               {% for error in form.district.errors %}<div class="error">{{ error }}</div>{% endfor %}
+            </div>
+         </div>
+         <div>
+            <label class="label" for="{{ form.address.id_for_label }}">Adres</label>
+            {{ form.address }}
+            {% for error in form.address.errors %}<div class="error">{{ error }}</div>{% endfor %}
+         </div>
+      </section>
+
+      <div class="actions">
+         <button class="btn btn-primary" type="submit">Sikayeti Kaydet</button>
+         <a class="btn btn-secondary" href="{% url 'complaint_list' %}">Vazgec</a>
+      </div>
+   </form>
+</div>
+{% endblock %}

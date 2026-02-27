@@ -1,0 +1,295 @@
+﻿{% extends 'base.html' %}
+
+{% block title %}Sikayet Listesi | Sikayet Sistemi{% endblock %}
+
+{% block content %}
+<style>
+   .section-head {
+      margin-bottom: 16px;
+   }
+
+   .section-head h1 {
+      margin: 0;
+      color: var(--color-primary);
+      font-size: 1.9rem;
+   }
+
+   .section-head p {
+      margin: 6px 0 0;
+      color: var(--muted);
+   }
+
+   .filter-box {
+      padding: 16px;
+      margin-bottom: 16px;
+   }
+
+   .filter-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+   }
+
+   .field label {
+      display: block;
+      font-size: 0.85rem;
+      margin-bottom: 5px;
+      color: var(--color-primary);
+      font-weight: 700;
+   }
+
+   .field input,
+   .field select {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid rgba(64, 81, 59, 0.24);
+      padding: 10px 12px;
+      font: inherit;
+      background: #fff;
+   }
+
+   .field input:focus,
+   .field select:focus {
+      outline: 2px solid rgba(98, 129, 65, 0.18);
+      border-color: var(--color-secondary);
+   }
+
+   .btn-filter {
+      width: 100%;
+      height: 41px;
+      border: 0;
+      border-radius: 10px;
+      background: var(--color-secondary);
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 22px;
+   }
+
+   .list {
+      display: grid;
+      gap: 12px;
+   }
+
+   .complaint-card {
+      padding: 15px;
+   }
+
+   .row-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 10px;
+   }
+
+   .row-top h3 {
+      margin: 0;
+      color: var(--color-primary);
+   }
+
+   .tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+   }
+
+   .tag {
+      font-size: 0.78rem;
+      border-radius: 999px;
+      padding: 5px 10px;
+      color: #fff;
+      font-weight: 700;
+      background: var(--color-secondary);
+   }
+
+   .tag.urgent { background: var(--color-accent); }
+   .tag.high { background: #d35400; }
+   .tag.low { background: #7f8c7a; }
+   .tag.new { background: var(--color-light); color: var(--color-primary); }
+   .tag.progress { background: #4a90e2; }
+   .tag.done { background: #2f855a; }
+   .tag.reject { background: #c0392b; }
+
+   .meta {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      font-size: 0.88rem;
+      color: var(--muted);
+   }
+
+   .meta div {
+      background: rgba(229, 217, 182, 0.33);
+      border-radius: 10px;
+      padding: 7px 10px;
+   }
+
+   .pagination {
+      margin-top: 18px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+   }
+
+   .pagination a,
+   .pagination span {
+      text-decoration: none;
+      border-radius: 999px;
+      padding: 8px 12px;
+      border: 1px solid rgba(64, 81, 59, 0.18);
+      color: var(--color-primary);
+      font-weight: 700;
+      font-size: 0.88rem;
+      background: #fff;
+   }
+
+   .pagination span {
+      background: var(--color-light);
+      border-color: transparent;
+   }
+
+   @media (max-width: 980px) {
+      .filter-grid {
+         grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .meta {
+         grid-template-columns: 1fr;
+      }
+   }
+
+   @media (max-width: 600px) {
+      .filter-grid {
+         grid-template-columns: 1fr;
+      }
+
+      .btn-filter {
+         margin-top: 0;
+      }
+
+      .row-top {
+         flex-direction: column;
+      }
+   }
+</style>
+
+<section class="section-head">
+   <h1>Tum Sikayetler</h1>
+   <p>{{ complaints.paginator.count }} kayit bulundu.</p>
+</section>
+
+<section class="card filter-box">
+   <form method="get" class="filter-grid">
+      <div class="field">
+         <label for="search">Ara</label>
+         <input id="search" type="text" name="search" value="{{ search_query }}" placeholder="Baslik, aciklama, ilce">
+      </div>
+
+      <div class="field">
+         <label for="status">Durum</label>
+         <select id="status" name="status">
+            <option value="">Tum durumlar</option>
+            <option value="new" {% if selected_status == 'new' %}selected{% endif %}>Yeni</option>
+            <option value="in_progress" {% if selected_status == 'in_progress' %}selected{% endif %}>Inceleniyor</option>
+            <option value="resolved" {% if selected_status == 'resolved' %}selected{% endif %}>Cozuldu</option>
+            <option value="rejected" {% if selected_status == 'rejected' %}selected{% endif %}>Reddedildi</option>
+         </select>
+      </div>
+
+      <div class="field">
+         <label for="priority">Oncelik</label>
+         <select id="priority" name="priority">
+            <option value="">Tum oncelikler</option>
+            <option value="low" {% if selected_priority == 'low' %}selected{% endif %}>Dusuk</option>
+            <option value="medium" {% if selected_priority == 'medium' %}selected{% endif %}>Orta</option>
+            <option value="high" {% if selected_priority == 'high' %}selected{% endif %}>Yuksek</option>
+            <option value="urgent" {% if selected_priority == 'urgent' %}selected{% endif %}>Acil</option>
+         </select>
+      </div>
+
+      <div class="field">
+         <label for="category">Kategori</label>
+         <select id="category" name="category">
+            <option value="">Tum kategoriler</option>
+            <option value="infrastructure" {% if selected_category == 'infrastructure' %}selected{% endif %}>Altyapi</option>
+            <option value="traffic" {% if selected_category == 'traffic' %}selected{% endif %}>Trafik</option>
+            <option value="pothole" {% if selected_category == 'pothole' %}selected{% endif %}>Cukur</option>
+            <option value="water" {% if selected_category == 'water' %}selected{% endif %}>Su Kacagi</option>
+            <option value="trash" {% if selected_category == 'trash' %}selected{% endif %}>Cop</option>
+            <option value="other" {% if selected_category == 'other' %}selected{% endif %}>Diger</option>
+         </select>
+      </div>
+
+      <div>
+         <button class="btn-filter" type="submit">Filtrele</button>
+      </div>
+   </form>
+</section>
+
+<section class="list">
+   {% for complaint in complaints %}
+      <article class="card complaint-card">
+         <div class="row-top">
+            <div>
+               <h3><a href="{% url 'complaint_detail' complaint.id %}" style="color:inherit; text-decoration:none;">{{ complaint.title }}</a></h3>
+               <small style="color: var(--muted);">{{ complaint.created_at|date:"d.m.Y H:i" }}</small>
+            </div>
+
+            <div class="tags">
+               {% if complaint.priority == 'urgent' %}
+                  <span class="tag urgent">Acil</span>
+               {% elif complaint.priority == 'high' %}
+                  <span class="tag high">Yuksek</span>
+               {% elif complaint.priority == 'low' %}
+                  <span class="tag low">Dusuk</span>
+               {% else %}
+                  <span class="tag">Orta</span>
+               {% endif %}
+
+               {% if complaint.status == 'new' %}
+                  <span class="tag new">Yeni</span>
+               {% elif complaint.status == 'in_progress' %}
+                  <span class="tag progress">Inceleniyor</span>
+               {% elif complaint.status == 'resolved' %}
+                  <span class="tag done">Cozuldu</span>
+               {% else %}
+                  <span class="tag reject">Reddedildi</span>
+               {% endif %}
+            </div>
+         </div>
+
+         <p style="line-height:1.55; margin:0 0 10px;">{{ complaint.description|truncatewords:30 }}</p>
+
+         <div class="meta">
+            <div><strong>Konum:</strong> {{ complaint.district }} / {{ complaint.city }}</div>
+            <div><strong>Kategori:</strong> {{ complaint.get_category_display }}</div>
+            <div><a href="{% url 'complaint_detail' complaint.id %}" style="color:var(--color-accent); font-weight:700; text-decoration:none;">Detaylari Gor</a></div>
+         </div>
+      </article>
+   {% empty %}
+      <article class="card complaint-card">
+         <p style="margin:0; color: var(--muted);">Sonuca uygun sikayet bulunamadi.</p>
+      </article>
+   {% endfor %}
+</section>
+
+{% if is_paginated %}
+   <nav class="pagination">
+      {% if page_obj.has_previous %}
+         <a href="?page=1&search={{ search_query }}&status={{ selected_status }}&priority={{ selected_priority }}&category={{ selected_category }}">Ilk</a>
+         <a href="?page={{ page_obj.previous_page_number }}&search={{ search_query }}&status={{ selected_status }}&priority={{ selected_priority }}&category={{ selected_category }}">Onceki</a>
+      {% endif %}
+
+      <span>{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+
+      {% if page_obj.has_next %}
+         <a href="?page={{ page_obj.next_page_number }}&search={{ search_query }}&status={{ selected_status }}&priority={{ selected_priority }}&category={{ selected_category }}">Sonraki</a>
+         <a href="?page={{ page_obj.paginator.num_pages }}&search={{ search_query }}&status={{ selected_status }}&priority={{ selected_priority }}&category={{ selected_category }}">Son</a>
+      {% endif %}
+   </nav>
+{% endif %}
+{% endblock %}

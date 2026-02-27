@@ -1,0 +1,15 @@
+{
+   "dependencies": {
+      "@tailwindcss/cli": "^4.1.18",
+      "tailwindcss": "^4.1.18"
+   },
+   "devDependencies": {
+      "concurrently": "^9.2.1"
+   },
+   "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "dev": "npx @tailwindcss/cli -i ./sikayet_sistemi/static/src/input.css -o ./sikayet_sistemi/static/dist/output.css --watch",
+      "django": ".\\.venv\\Scripts\\python.exe .\\sikayet_sistemi\\manage.py runserver",
+      "start": "concurrently \"npm run dev\" \"npm run django\""
+   }
+}

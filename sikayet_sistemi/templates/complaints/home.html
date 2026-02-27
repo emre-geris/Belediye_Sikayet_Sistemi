@@ -1,0 +1,258 @@
+﻿{% extends 'base.html' %}
+
+{% block title %}Ana Sayfa | Sikayet Sistemi{% endblock %}
+
+{% block content %}
+<style>
+   .hero {
+      padding: 28px;
+      background: linear-gradient(135deg, rgba(64, 81, 59, 0.95), rgba(98, 129, 65, 0.92));
+      border-radius: 20px;
+      color: #fffdf8;
+      box-shadow: 0 14px 32px rgba(64, 81, 59, 0.22);
+   }
+
+   .hero h1 {
+      margin: 0 0 10px;
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+   }
+
+   .hero p {
+      margin: 0;
+      max-width: 70ch;
+      line-height: 1.6;
+      color: #f3ecd7;
+   }
+
+   .hero-actions {
+      margin-top: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+   }
+
+   .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 11px 18px;
+      text-decoration: none;
+      font-weight: 700;
+      border: 1px solid transparent;
+      transition: 0.2s ease;
+   }
+
+   .btn-primary {
+      background: var(--color-accent);
+      color: #fff;
+   }
+
+   .btn-primary:hover {
+      filter: brightness(1.05);
+   }
+
+   .btn-outline {
+      background: transparent;
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.5);
+   }
+
+   .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.12);
+   }
+
+   .stats {
+      margin-top: 18px;
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+   }
+
+   .stat {
+      padding: 16px;
+      border-left: 5px solid var(--color-secondary);
+   }
+
+   .stat:nth-child(1) { border-color: var(--color-primary); }
+   .stat:nth-child(2) { border-color: var(--color-secondary); }
+   .stat:nth-child(3) { border-color: #2f855a; }
+   .stat:nth-child(4) { border-color: var(--color-accent); }
+
+   .stat small {
+      color: var(--muted);
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+   }
+
+   .stat strong {
+      font-size: 1.65rem;
+      color: var(--color-primary);
+   }
+
+   .section-title {
+      margin: 28px 0 12px;
+      font-size: 1.35rem;
+      color: var(--color-primary);
+   }
+
+   .main-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 16px;
+   }
+
+   .list-wrap {
+      padding: 16px;
+   }
+
+   .item {
+      padding: 14px;
+      border-radius: 12px;
+      background: #ffffff;
+      border: 1px solid rgba(64, 81, 59, 0.12);
+      margin-bottom: 10px;
+   }
+
+   .item h3 {
+      margin: 0 0 8px;
+      font-size: 1.08rem;
+   }
+
+   .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 0.88rem;
+   }
+
+   .pill {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #fff;
+      background: var(--color-secondary);
+   }
+
+   .pill.urgent { background: var(--color-accent); }
+   .pill.high { background: #d35400; }
+   .pill.low { background: #8a9a86; }
+
+   .roadmap {
+      padding: 16px;
+   }
+
+   .roadmap-row {
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(64, 81, 59, 0.13);
+   }
+
+   .roadmap-row:last-child { border-bottom: 0; }
+
+   .map-preview {
+      margin-top: 10px;
+      border-radius: 12px;
+      height: 200px;
+      background:
+         linear-gradient(140deg, rgba(98, 129, 65, 0.3), rgba(229, 217, 182, 0.8)),
+         repeating-linear-gradient(45deg, rgba(64, 81, 59, 0.07), rgba(64, 81, 59, 0.07) 10px, transparent 10px, transparent 20px);
+      border: 1px dashed rgba(64, 81, 59, 0.42);
+      display: grid;
+      place-items: center;
+      color: var(--color-primary);
+      font-weight: 700;
+   }
+
+   @media (max-width: 980px) {
+      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .main-grid { grid-template-columns: 1fr; }
+   }
+
+   @media (max-width: 560px) {
+      .stats { grid-template-columns: 1fr; }
+   }
+</style>
+
+<section class="hero">
+   <h1>Ilce Bazli Sikayet Takip Platformu</h1>
+   <p>
+      Vatandaslar sikayetlerini girer, sistem kayit altina alir, listeler ve ilerleyen asamada
+      NLP ile onceliklendirme + harita tabanli gorunum eklenir. Bu ekran su an proje icin temel taslaktir.
+   </p>
+   <div class="hero-actions">
+      <a class="btn btn-primary" href="{% url 'complaint_create' %}">Yeni Sikayet Gir</a>
+      <a class="btn btn-outline" href="{% url 'complaint_list' %}">Tum Sikayetler</a>
+   </div>
+</section>
+
+<section class="stats">
+   <article class="card stat">
+      <small>Toplam Sikayet</small>
+      <strong>{{ total_complaints }}</strong>
+   </article>
+   <article class="card stat">
+      <small>Yeni Sikayet</small>
+      <strong>{{ new_complaints }}</strong>
+   </article>
+   <article class="card stat">
+      <small>Cozulen Sikayet</small>
+      <strong>{{ resolved_complaints }}</strong>
+   </article>
+   <article class="card stat">
+      <small>Acil Sikayet</small>
+      <strong>{{ urgent_complaints }}</strong>
+   </article>
+</section>
+
+<h2 class="section-title">Hizli Bakis</h2>
+<section class="main-grid">
+   <article class="card list-wrap">
+      <h3 style="margin-top:0; color: var(--color-primary);">Son Sikayetler</h3>
+      {% if recent_complaints %}
+         {% for complaint in recent_complaints %}
+            <div class="item">
+               <h3>{{ complaint.title }}</h3>
+               {% if complaint.priority == 'urgent' %}
+                  <span class="pill urgent">Acil</span>
+               {% elif complaint.priority == 'high' %}
+                  <span class="pill high">Yuksek</span>
+               {% elif complaint.priority == 'low' %}
+                  <span class="pill low">Dusuk</span>
+               {% else %}
+                  <span class="pill">Orta</span>
+               {% endif %}
+               <p style="margin:8px 0 10px; line-height:1.5;">{{ complaint.description|truncatewords:20 }}</p>
+               <div class="meta">
+                  <span>{{ complaint.district }} / {{ complaint.city }}</span>
+                  <a href="{% url 'complaint_detail' complaint.id %}" style="color: var(--color-accent); text-decoration: none; font-weight: 700;">Detay</a>
+               </div>
+            </div>
+         {% endfor %}
+      {% else %}
+         <p style="color: var(--muted);">Henuz kayitli sikayet yok.</p>
+      {% endif %}
+   </article>
+
+   <aside class="card roadmap">
+      <h3 style="margin-top:0; color: var(--color-primary);">Proje Yol Haritasi</h3>
+      <div class="roadmap-row">
+         <strong>1. Asama (Hazir)</strong>
+         <p>Kayit olusturma, listeleme, detay sayfasi.</p>
+      </div>
+      <div class="roadmap-row">
+         <strong>2. Asama (Sonraki)</strong>
+         <p>Sikayetleri NLP ile oncelik skoruna gore siralama.</p>
+      </div>
+      <div class="roadmap-row">
+         <strong>3. Asama (Plan)</strong>
+         <p>Ilce bazli haritada durum renkleriyle gorsellestirme.</p>
+      </div>
+      <div class="map-preview">Harita Modul Taslak Alani</div>
+   </aside>
+</section>
+{% endblock %}

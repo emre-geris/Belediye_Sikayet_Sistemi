@@ -1,0 +1,137 @@
+﻿{% extends 'base.html' %}
+
+{% block title %}{{ complaint.title }} | Sikayet Sistemi{% endblock %}
+
+{% block content %}
+<style>
+   .detail-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 14px;
+   }
+
+   .box {
+      padding: 16px;
+   }
+
+   .title {
+      margin: 0 0 8px;
+      color: var(--color-primary);
+      font-size: 1.9rem;
+      line-height: 1.2;
+   }
+
+   .muted {
+      color: var(--muted);
+      font-size: 0.9rem;
+   }
+
+   .pill {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #fff;
+      margin-right: 6px;
+      margin-top: 6px;
+      background: var(--color-secondary);
+   }
+
+   .pill.urgent { background: var(--color-accent); }
+   .pill.high { background: #d35400; }
+   .pill.low { background: #7f8c7a; }
+   .pill.new { background: var(--color-light); color: var(--color-primary); }
+   .pill.progress { background: #4a90e2; }
+   .pill.done { background: #2f855a; }
+   .pill.reject { background: #c0392b; }
+
+   .summary-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+   }
+
+   .summary-row div {
+      background: rgba(229, 217, 182, 0.3);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 0.88rem;
+   }
+
+   .actions {
+      margin-top: 10px;
+      display: grid;
+      gap: 8px;
+   }
+
+   .actions a {
+      text-decoration: none;
+      text-align: center;
+      border-radius: 999px;
+      padding: 10px 12px;
+      font-weight: 700;
+   }
+
+   .a1 { background: var(--color-primary); color: #fff; }
+   .a2 { background: var(--color-secondary); color: #fff; }
+
+   @media (max-width: 900px) {
+      .detail-grid { grid-template-columns: 1fr; }
+   }
+</style>
+
+<p style="margin-top:0;"><a href="{% url 'complaint_list' %}" style="color: var(--color-accent); text-decoration:none; font-weight:700;">Listeye don</a></p>
+
+<section class="detail-grid">
+   <article class="card box">
+      <h1 class="title">{{ complaint.title }}</h1>
+      <p class="muted">Sikayet No: #{{ complaint.id }} | {{ complaint.created_at|date:"d.m.Y H:i" }}</p>
+
+      <div>
+         {% if complaint.priority == 'urgent' %}
+            <span class="pill urgent">Acil</span>
+         {% elif complaint.priority == 'high' %}
+            <span class="pill high">Yuksek</span>
+         {% elif complaint.priority == 'low' %}
+            <span class="pill low">Dusuk</span>
+         {% else %}
+            <span class="pill">Orta</span>
+         {% endif %}
+
+         {% if complaint.status == 'new' %}
+            <span class="pill new">Yeni</span>
+         {% elif complaint.status == 'in_progress' %}
+            <span class="pill progress">Inceleniyor</span>
+         {% elif complaint.status == 'resolved' %}
+            <span class="pill done">Cozuldu</span>
+         {% else %}
+            <span class="pill reject">Reddedildi</span>
+         {% endif %}
+      </div>
+
+      <h3 style="color: var(--color-primary); margin:16px 0 8px;">Aciklama</h3>
+      <p style="margin:0; line-height:1.65; white-space: pre-wrap;">{{ complaint.description }}</p>
+
+      <h3 style="color: var(--color-primary); margin:16px 0 8px;">Konum</h3>
+      <p style="margin:0; line-height:1.55;">{{ complaint.address }}</p>
+      <p class="muted" style="margin-top:6px;">{{ complaint.district }} / {{ complaint.city }}</p>
+   </article>
+
+   <aside class="card box">
+      <h3 style="margin-top:0; color: var(--color-primary);">Ozet Bilgi</h3>
+      <div class="summary-row">
+         <div><strong>Durum</strong><br>{{ complaint.get_status_display }}</div>
+         <div><strong>Oncelik</strong><br>{{ complaint.get_priority_display }}</div>
+         <div><strong>Kategori</strong><br>{{ complaint.get_category_display }}</div>
+         <div><strong>Guncelleme</strong><br>{{ complaint.updated_at|date:"d.m.Y H:i" }}</div>
+      </div>
+
+      <div class="actions">
+         <a class="a1" href="{% url 'complaint_list' %}">Tum Sikayetler</a>
+         <a class="a2" href="{% url 'complaint_create' %}">Yeni Sikayet Gir</a>
+      </div>
+   </aside>
+</section>
+{% endblock %}
