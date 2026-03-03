@@ -21,5 +21,6 @@ from apps.complaints import views as complaint_views
 urlpatterns = [
     path('', complaint_views.home, name='home'),
     path('sikayetler/', include('apps.complaints.urls')),
+    path('', include('apps.users.urls')),
     path('admin/', admin.site.urls),
 ]

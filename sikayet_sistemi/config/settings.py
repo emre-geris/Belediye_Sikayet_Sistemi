@@ -123,3 +123,12 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / "static"
 ]
+
+# Email Configuration - Development
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Password reset timeout (in seconds) - 1 hour
+PASSWORD_RESET_TIMEOUT = 3600
+
+# Login redirect URL
+LOGIN_REDIRECT_URL = 'home'

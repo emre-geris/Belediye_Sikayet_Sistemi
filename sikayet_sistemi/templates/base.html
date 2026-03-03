@@ -149,12 +149,25 @@
             <li><a href="{% url 'home' %}">Ana Sayfa</a></li>
             <li><a href="{% url 'complaint_list' %}">Sikayetler</a></li>
             <li><a href="{% url 'complaint_create' %}">Yeni Sikayet</a></li>
+            {% if user.is_authenticated %}
+               <li style="pointer-events:none; color: var(--muted);">Hoşgeldin, {{ user.username }}</li>
+               <li><a href="{% url 'logout' %}">Çıkış</a></li>
+            {% else %}
+               <li><a href="{% url 'login' %}">Giriş / Kayıt</a></li>
+            {% endif %}
          </ul>
       </div>
    </header>
 
    <main class="main-area">
       <div class="container">
+         {% if messages %}
+            <ul class="messages" style="list-style:none;padding:0;margin:0 0 20px;">
+               {% for message in messages %}
+                  <li class="message {{ message.tags }}" style="padding:12px 16px;border-radius:8px;margin-bottom:6px;background:#f0f0f0;color:#333;">{{ message }}</li>
+               {% endfor %}
+            </ul>
+         {% endif %}
          {% block content %}{% endblock %}
       </div>
    </main>
