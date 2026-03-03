@@ -179,7 +179,7 @@
 
 <section class="section-head">
    <h1>Tum Sikayetler</h1>
-   <p>{{ complaints.paginator.count }} kayit bulundu.</p>
+   <p><strong>{{ complaints.paginator.count }}</strong> kayit bulundu.</p>
 </section>
 
 <section class="card filter-box">
@@ -236,7 +236,7 @@
          <div class="row-top">
             <div>
                <h3><a href="{% url 'complaint_detail' complaint.id %}" style="color:inherit; text-decoration:none;">{{ complaint.title }}</a></h3>
-               <small style="color: var(--muted);">{{ complaint.created_at|date:"d.m.Y H:i" }}</small>
+               <small style="color: var(--muted); font-weight: 700;">{{ complaint.created_at|date:"d.m.Y H:i" }}</small>
             </div>
 
             <div class="tags">

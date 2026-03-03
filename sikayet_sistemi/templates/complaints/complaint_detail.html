@@ -87,7 +87,7 @@
 <section class="detail-grid">
    <article class="card box">
       <h1 class="title">{{ complaint.title }}</h1>
-      <p class="muted">Sikayet No: #{{ complaint.id }} | {{ complaint.created_at|date:"d.m.Y H:i" }}</p>
+      <p class="muted"><strong>Sikayet No:</strong> #{{ complaint.id }} | <strong>Tarih:</strong> {{ complaint.created_at|date:"d.m.Y H:i" }}</p>
 
       <div>
          {% if complaint.priority == 'urgent' %}
@@ -116,7 +116,7 @@
 
       <h3 style="color: var(--color-primary); margin:16px 0 8px;">Konum</h3>
       <p style="margin:0; line-height:1.55;">{{ complaint.address }}</p>
-      <p class="muted" style="margin-top:6px;">{{ complaint.district }} / {{ complaint.city }}</p>
+      <p class="muted" style="margin-top:6px;"><strong>{{ complaint.district }}</strong> / <strong>{{ complaint.city }}</strong></p>
    </article>
 
    <aside class="card box">

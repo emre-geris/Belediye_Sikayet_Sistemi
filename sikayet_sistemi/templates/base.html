@@ -1,9 +1,11 @@
-﻿<!doctype html>
+﻿{% load static %}
+<!doctype html>
 <html lang="tr">
 <head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>{% block title %}Sikayet Sistemi{% endblock %}</title>
+   <meta charset="UTF-8" />
+   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+   <title>{% block title %}Şikayet Sistemi{% endblock %}</title>
+   <link rel="stylesheet" href="{% static 'dist/output.css' %}">
    <style>
       :root {
          --color-primary: #40513b;
@@ -14,174 +16,36 @@
          --card: #fffdf7;
          --text: #1f2a1d;
          --muted: #5e6b5a;
-         --radius: 14px;
-      }
-
-      * {
-         box-sizing: border-box;
-      }
-
-      body {
-         margin: 0;
-         font-family: "Trebuchet MS", "Segoe UI", sans-serif;
-         color: var(--text);
-         background:
-            radial-gradient(circle at 5% 0%, rgba(230, 126, 34, 0.12), transparent 45%),
-            radial-gradient(circle at 95% 10%, rgba(98, 129, 65, 0.15), transparent 38%),
-            var(--bg);
-         min-height: 100vh;
-      }
-
-      .container {
-         width: min(1120px, 92%);
-         margin: 0 auto;
-      }
-
-      .site-header {
-         position: sticky;
-         top: 0;
-         z-index: 10;
-         backdrop-filter: blur(8px);
-         background: rgba(247, 244, 234, 0.92);
-         border-bottom: 1px solid rgba(64, 81, 59, 0.12);
-      }
-
-      .header-row {
-         min-height: 72px;
-         display: flex;
-         align-items: center;
-         justify-content: space-between;
-         gap: 16px;
-      }
-
-      .brand {
-         font-size: 1.35rem;
-         font-weight: 800;
-         color: var(--color-primary);
-         text-decoration: none;
-      }
-
-      .menu {
-         display: flex;
-         gap: 14px;
-         list-style: none;
-         padding: 0;
-         margin: 0;
-      }
-
-      .menu a {
-         color: var(--color-primary);
-         text-decoration: none;
-         font-weight: 600;
-         padding: 10px 14px;
-         border-radius: 999px;
-         transition: 0.2s ease;
-      }
-
-      .menu a:hover {
-         background: var(--color-light);
-      }
-
-      .main-area {
-         padding: 34px 0 26px;
-      }
-
-      .card {
-         background: var(--card);
-         border: 1px solid rgba(64, 81, 59, 0.12);
-         border-radius: var(--radius);
-         box-shadow: 0 6px 20px rgba(64, 81, 59, 0.08);
-      }
-
-      .site-footer {
-         margin-top: 40px;
-         background: var(--color-primary);
-         color: #f8f6ef;
-      }
-
-      .footer-grid {
-         display: grid;
-         grid-template-columns: repeat(3, minmax(0, 1fr));
-         gap: 22px;
-         padding: 28px 0;
-      }
-
-      .site-footer h3 {
-         margin-top: 0;
-         margin-bottom: 10px;
-      }
-
-      .site-footer p,
-      .site-footer a {
-         color: #f2ead0;
-         text-decoration: none;
-         margin: 4px 0;
-      }
-
-      .footer-bottom {
-         border-top: 1px solid rgba(229, 217, 182, 0.28);
-         padding: 14px 0 22px;
-         font-size: 0.95rem;
-      }
-
-      @media (max-width: 760px) {
-         .header-row {
-            flex-direction: column;
-            align-items: flex-start;
-            padding: 12px 0;
-         }
-
-         .menu {
-            flex-wrap: wrap;
-         }
-
-         .footer-grid {
-            grid-template-columns: 1fr;
-         }
       }
    </style>
 </head>
-<body>
-   <header class="site-header">
-      <div class="container header-row">
-         <a class="brand" href="{% url 'home' %}">Sikayet Sistemi</a>
-         <ul class="menu">
-            <li><a href="{% url 'home' %}">Ana Sayfa</a></li>
-            <li><a href="{% url 'complaint_list' %}">Sikayetler</a></li>
-            <li><a href="{% url 'complaint_create' %}">Yeni Sikayet</a></li>
+<body class="font-inter min-h-screen flex flex-col bg-gradient-to-bl from-bg to-light text-[var(--text)] ">
+
+   <!-- Navbar -->
+   <header class="fixed top-0 w-full z-50 bg-[var(--color-primary)] shadow">
+      <div class="container mx-auto flex justify-between items-center py-4 px-4 md:px-0">
+         <a href="/" class="text-white font-bold text-xl md:text-2xl">Şikayet Sistemi</a>
+         <ul class="flex gap-6 text-white">
+            <li><a href="#" class="hover:text-[var(--color-accent)] transition-colors">Ana Sayfa</a></li>
+            <li><a href="#" class="hover:text-[var(--color-accent)] transition-colors">Şikayetler</a></li>
+            <li><a href="#" class="hover:text-[var(--color-accent)] transition-colors">Yeni Şikayet</a></li>
+            <li><a href="#" class="hover:text-[var(--color-accent)] transition-colors">Giriş / Kayıt</a></li>
          </ul>
       </div>
    </header>
 
-   <main class="main-area">
-      <div class="container">
-         {% block content %}{% endblock %}
-      </div>
+   <!-- Main Content -->
+   <main class="flex-1 container mx-auto px-4 md:px-0 pt-28">
+      {% block content %}{% endblock %}
    </main>
 
-   <footer class="site-footer">
-      <div class="container footer-grid">
-         <div>
-            <h3>Sikayet Sistemi</h3>
-            <p>Vatandas geri bildirimlerini tek noktada toplar.</p>
-         </div>
-         <div>
-            <h3>Hizli Linkler</h3>
-            <p><a href="{% url 'home' %}">Ana Sayfa</a></p>
-            <p><a href="{% url 'complaint_list' %}">Sikayet Listesi</a></p>
-            <p><a href="{% url 'complaint_create' %}">Yeni Sikayet Gir</a></p>
-         </div>
-         <div>
-            <h3>Planlanan Adimlar</h3>
-            <p>NLP onceliklendirme</p>
-            <p>Ilce bazli harita gorunumu</p>
-            <p>Yonetim paneli raporlari</p>
-         </div>
-      </div>
-      <div class="container footer-bottom">
-         <small>&copy; 2026 Sikayet Sistemi</small>
+   <!-- Footer -->
+   <footer class="bg-[var(--color-secondary)] text-white py-4 mt-8">
+      <div class="container mx-auto text-center text-sm font-semibold">
+         &copy; 2026 Şikayet Sistemi | Tüm Hakları Saklıdır
       </div>
    </footer>
+
+   {% block extra_js %}{% endblock %}
 </body>
 </html>
-
