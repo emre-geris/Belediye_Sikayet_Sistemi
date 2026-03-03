@@ -11,12 +11,13 @@
 
 # **Isleyis**
 # Herkes yapicagi is icin isi uygun sekilde anlatan kisa bir isimle branch acsin
-# Isleriniz bitincek kontrol edip maine cekecegim
+# uygun isimde commit atin ve bitince pushlayin
+# Uygun bir sekilde tamamlanan taskleri maine cekecegim
 
 # **Projeyi Calistirmak**
 # Projeyi Calistirmak icin Adimlar:
 # Terminalde cd sikayet_sistemi komutunu calistirarak klasore girin
-# sonrasinda terminale npm start komutunu yazin
+# sonrasinda terminale npm run start komutunu yazin
 # http://127.0.0.1:8000/ ip sini kopylayain ve tarayicida acin.
 
 # Not eger migrate hatasi alinirsa

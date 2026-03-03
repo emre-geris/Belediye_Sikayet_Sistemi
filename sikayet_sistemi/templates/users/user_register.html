@@ -1,0 +1,218 @@
+{% extends 'base.html' %} {% load static %} {% block title %}Kullanıcı Kayıt -
+Şikayet Sistemi{% endblock %} {% block content %}
+<div
+   class="flex justify-center bg-gradient-to-br from-[var(--bg)] to-[rgba(98,129,65,0.1)] py-8 px-4 sm:px-6 lg:px-8">
+   <div class="w-full max-w-2xl">
+      <!-- Card -->
+      <div
+         class="bg-[var(--card)] rounded-2xl shadow-2xl overflow-hidden border border-[var(--color-light)]">
+         <!-- Header -->
+         <div
+            class="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] px-8 py-8 text-center">
+            <div class="text-5xl mb-4">✍️</div>
+            <h1 class="text-3xl font-bold text-white mb-2">
+               Yeni Hesap Oluştur
+            </h1>
+            <p class="text-[var(--color-light)]">Şikayet sisteminize katılın</p>
+         </div>
+
+         <!-- Form -->
+         <div class="px-8 py-8">
+            {% if messages %}
+            <div class="mb-6 space-y-3">
+               {% for message in messages %}
+               <div
+                  class="p-4 rounded-lg bg-{% if message.tags %}{{ message.tags }}-50{% else %}blue-50{% endif %} border border-{% if message.tags %}{{ message.tags }}-200{% else %}blue-200{% endif %} text-{% if message.tags %}{{ message.tags }}-800{% else %}blue-800{% endif %}">
+                  {{ message }}
+               </div>
+               {% endfor %}
+            </div>
+            {% endif %}
+
+            <form method="post" class="space-y-6" novalidate>
+               {% csrf_token %}
+
+               <!-- Row 1: First and Last Name -->
+               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <!-- First Name -->
+                  <div>
+                     <label
+                        for="{{ form.first_name.id_for_label }}"
+                        class="block text-sm font-semibold text-[var(--text)] mb-2">
+                        Adınız *
+                     </label>
+                     {{ form.first_name }} {% if form.first_name.errors %}
+                     <div class="mt-2 text-red-600 text-sm">
+                        {% for error in form.first_name.errors %}
+                        <p>• {{ error }}</p>
+                        {% endfor %}
+                     </div>
+                     {% endif %}
+                  </div>
+
+                  <!-- Last Name -->
+                  <div>
+                     <label
+                        for="{{ form.last_name.id_for_label }}"
+                        class="block text-sm font-semibold text-[var(--text)] mb-2">
+                        Soyadınız *
+                     </label>
+                     {{ form.last_name }} {% if form.last_name.errors %}
+                     <div class="mt-2 text-red-600 text-sm">
+                        {% for error in form.last_name.errors %}
+                        <p>• {{ error }}</p>
+                        {% endfor %}
+                     </div>
+                     {% endif %}
+                  </div>
+               </div>
+
+               <!-- Row 2: TC ID and Email -->
+               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <!-- TC Kimlik -->
+                  <div>
+                     <label
+                        for="{{ form.tc_id.id_for_label }}"
+                        class="block text-sm font-semibold text-[var(--text)] mb-2">
+                        TC Kimlik Numarası *
+                     </label>
+                     {{ form.tc_id }} {% if form.tc_id.errors %}
+                     <div class="mt-2 text-red-600 text-sm">
+                        {% for error in form.tc_id.errors %}
+                        <p>• {{ error }}</p>
+                        {% endfor %}
+                     </div>
+                     {% endif %}
+                  </div>
+
+                  <!-- Email -->
+                  <div>
+                     <label
+                        for="{{ form.email.id_for_label }}"
+                        class="block text-sm font-semibold text-[var(--text)] mb-2">
+                        Email Adresi *
+                     </label>
+                     {{ form.email }} {% if form.email.errors %}
+                     <div class="mt-2 text-red-600 text-sm">
+                        {% for error in form.email.errors %}
+                        <p>• {{ error }}</p>
+                        {% endfor %}
+                     </div>
+                     {% endif %}
+                  </div>
+               </div>
+
+               <!-- Row 3: Phone -->
+               <div>
+                  <label
+                     for="{{ form.phone.id_for_label }}"
+                     class="block text-sm font-semibold text-[var(--text)] mb-2">
+                     Telefon Numarası *
+                  </label>
+                  {{ form.phone }} {% if form.phone.errors %}
+                  <div class="mt-2 text-red-600 text-sm">
+                     {% for error in form.phone.errors %}
+                     <p>• {{ error }}</p>
+                     {% endfor %}
+                  </div>
+                  {% endif %}
+               </div>
+
+               <!-- Row 4: Address -->
+               <div>
+                  <label
+                     for="{{ form.address.id_for_label }}"
+                     class="block text-sm font-semibold text-[var(--text)] mb-2">
+                     Adres *
+                  </label>
+                  {{ form.address }} {% if form.address.errors %}
+                  <div class="mt-2 text-red-600 text-sm">
+                     {% for error in form.address.errors %}
+                     <p>• {{ error }}</p>
+                     {% endfor %}
+                  </div>
+                  {% endif %}
+               </div>
+
+               <!-- Row 5: Passwords -->
+               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <!-- Password -->
+                  <div>
+                     <label
+                        for="{{ form.password1.id_for_label }}"
+                        class="block text-sm font-semibold text-[var(--text)] mb-2">
+                        Şifre *
+                     </label>
+                     {{ form.password1 }} {% if form.password1.errors %}
+                     <div class="mt-2 text-red-600 text-sm">
+                        {% for error in form.password1.errors %}
+                        <p>• {{ error }}</p>
+                        {% endfor %}
+                     </div>
+                     {% endif %}
+                  </div>
+
+                  <!-- Password Confirmation -->
+                  <div>
+                     <label
+                        for="{{ form.password2.id_for_label }}"
+                        class="block text-sm font-semibold text-[var(--text)] mb-2">
+                        Şifre Onayı *
+                     </label>
+                     {{ form.password2 }} {% if form.password2.errors %}
+                     <div class="mt-2 text-red-600 text-sm">
+                        {% for error in form.password2.errors %}
+                        <p>• {{ error }}</p>
+                        {% endfor %}
+                     </div>
+                     {% endif %}
+                  </div>
+               </div>
+
+               <!-- General Form Errors -->
+               {% if form.non_field_errors %}
+               <div
+                  class="p-4 rounded-lg bg-red-50 border border-red-200 text-red-800">
+                  {% for error in form.non_field_errors %}
+                  <p>{{ error }}</p>
+                  {% endfor %}
+               </div>
+               {% endif %}
+
+               <!-- Submit Button -->
+               <button
+                  type="submit"
+                  class="w-full bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] text-white font-bold py-3 rounded-lg hover:shadow-lg transition duration-300 transform hover:scale-105">
+                  Hesap Oluştur
+               </button>
+            </form>
+
+            <!-- Links -->
+            <div class="mt-6 space-y-3 text-center text-sm">
+               <p>
+                  Zaten hesabınız var mı?
+                  <a
+                     href="{% url 'user_login' %}"
+                     class="font-bold text-[var(--color-primary)] hover:text-[var(--color-secondary)] transition">
+                     Giriş Yapın
+                  </a>
+               </p>
+               <p>
+                  <a
+                     href="{% url 'home' %}"
+                     class="text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition">
+                     Ana Sayfaya Dön
+                  </a>
+               </p>
+            </div>
+         </div>
+      </div>
+
+      <!-- Footer Info -->
+      <div class="mt-8 text-center text-sm text-gray-600">
+         <p>* Zorunlu alanlar</p>
+         <p class="mt-2">🔐 Verileriniz güvenlik altında korunmaktadır</p>
+      </div>
+   </div>
+</div>
+{% endblock %}

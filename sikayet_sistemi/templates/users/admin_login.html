@@ -1,0 +1,120 @@
+{% extends 'base.html' %} {% load static %} {% block title %}Yönetici Giriş -
+Şikayet Sistemi{% endblock %} {% block content %}
+<div
+   class="flex justify-center bg-gradient-to-br from-red-50 to-orange-50 py-8 px-4 sm:px-6 lg:px-8">
+   <div class="w-full max-w-md">
+      <!-- Card -->
+      <div
+         class="bg-white rounded-2xl shadow-2xl overflow-hidden border-t-4 border-red-600">
+         <!-- Header -->
+         <div
+            class="bg-gradient-to-r from-red-600 to-orange-600 px-8 py-8 text-center">
+            <div class="text-5xl mb-4">🔐</div>
+            <h1 class="text-3xl font-bold text-white mb-2">Yönetici Giriş</h1>
+            <p class="text-red-100">Yönetim Paneline Hoş Geldiniz</p>
+         </div>
+
+         <!-- Form -->
+         <div class="px-8 py-8">
+            {% if messages %}
+            <div class="mb-6 space-y-3">
+               {% for message in messages %}
+               <div
+                  class="p-4 rounded-lg bg-{% if message.tags %}{{ message.tags }}-50{% else %}red-50{% endif %} border border-{% if message.tags %}{{ message.tags }}-200{% else %}red-200{% endif %} text-{% if message.tags %}{{ message.tags }}-800{% else %}red-800{% endif %}">
+                  {{ message }}
+               </div>
+               {% endfor %}
+            </div>
+            {% endif %}
+
+            <form method="post" class="space-y-6" novalidate>
+               {% csrf_token %}
+
+               <!-- TC ID -->
+               <div>
+                  <label
+                     for="{{ form.tc_id.id_for_label }}"
+                     class="block text-sm font-semibold text-gray-900 mb-2">
+                     TC Kimlik Numarası
+                  </label>
+                  {{ form.tc_id }} {% if form.tc_id.errors %}
+                  <div class="mt-2 text-red-600 text-sm">
+                     {% for error in form.tc_id.errors %}
+                     <p>{{ error }}</p>
+                     {% endfor %}
+                  </div>
+                  {% endif %}
+               </div>
+
+               <!-- Password -->
+               <div>
+                  <label
+                     for="{{ form.password.id_for_label }}"
+                     class="block text-sm font-semibold text-gray-900 mb-2">
+                     Şifre
+                  </label>
+                  {{ form.password }} {% if form.password.errors %}
+                  <div class="mt-2 text-red-600 text-sm">
+                     {% for error in form.password.errors %}
+                     <p>{{ error }}</p>
+                     {% endfor %}
+                  </div>
+                  {% endif %}
+               </div>
+
+               <!-- General Form Errors -->
+               {% if form.non_field_errors %}
+               <div
+                  class="p-4 rounded-lg bg-red-50 border border-red-200 text-red-800">
+                  {% for error in form.non_field_errors %}
+                  <p>{{ error }}</p>
+                  {% endfor %}
+               </div>
+               {% endif %}
+
+               <!-- Submit Button -->
+               <button
+                  type="submit"
+                  class="w-full bg-gradient-to-r from-red-600 to-orange-600 text-white font-bold py-3 rounded-lg hover:shadow-lg transition duration-300 transform hover:scale-105">
+                  Yönetici Giriş
+               </button>
+            </form>
+
+            <!-- Divider -->
+            <div class="my-6 flex items-center">
+               <div class="flex-grow border-t border-gray-300"></div>
+               <div class="flex-shrink mx-4 text-gray-500 text-sm">veya</div>
+               <div class="flex-grow border-t border-gray-300"></div>
+            </div>
+
+            <!-- Links -->
+            <div class="space-y-3 text-center text-sm">
+               <p>
+                  Kullanı misiniz?
+                  <a
+                     href="{% url 'user_login' %}"
+                     class="font-bold text-blue-600 hover:text-blue-800 transition">
+                     Kullanıcı Giriş →
+                  </a>
+               </p>
+               <p>
+                  <a
+                     href="{% url 'home' %}"
+                     class="text-gray-600 hover:text-gray-900 transition">
+                     Ana Sayfaya Dön
+                  </a>
+               </p>
+            </div>
+         </div>
+      </div>
+
+      <!-- Warning -->
+      <div
+         class="mt-8 p-4 bg-red-50 border border-red-200 rounded-lg text-center">
+         <p class="text-sm text-red-800">
+            ⚠️ Bu alan sadece yöneticiler için ayrılmıştır
+         </p>
+      </div>
+   </div>
+</div>
+{% endblock %}

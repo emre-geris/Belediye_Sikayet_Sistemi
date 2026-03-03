@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 
 class Complaint(models.Model):
     PRIORITY_CHOICES = [
@@ -59,7 +59,7 @@ class Complaint(models.Model):
         verbose_name="Durum"
     )
     user = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='complaints',
         null=True,
