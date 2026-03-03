@@ -5,7 +5,7 @@
 {% block content %}
 
 <!-- Hero Section -->
-<section class="bg-gradient-to-br from-primary/95 to-secondary/90 text-card rounded-2xl shadow-lg p-7 md:p-12 mb-8">
+<section class="bg-gradient-to-br from-primary/95 to-secondary/90 text-card rounded-2xl shadow-lg p-7 md:p-12 mb-6">
    <h1 class="text-3xl md:text-4xl font-bold mb-3">İlçe Bazlı Şikayet Takip Platformu</h1>
    <p class="max-w-3xl text-base md:text-lg leading-relaxed mb-5 text-[var(--color-light)]">
       Vatandaşlar şikayetlerini girer, sistem kayıt altına alır, listeler ve ilerleyen aşamada NLP ile önceliklendirme + harita tabanlı görünüm eklenir. Bu ekran proje için temel taslaktır.
@@ -17,20 +17,20 @@
 </section>
 
 <!-- Stats Section -->
-<section class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-   <div class="card p-5 border-l-4 border-primary bg-card rounded-xl">
+<section class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+   <div class="card p-5 border-l-6 border-primary bg-card rounded-xl">
       <small class="block text-sm font-semibold text-muted mb-1">Toplam Şikayet</small>
       <strong class="text-2xl text-primary">{{ total_complaints }}</strong>
    </div>
-   <div class="card p-5 border-l-4 border-secondary bg-card rounded-xl">
+   <div class="card p-5 border-l-6 border-secondary bg-card rounded-xl">
       <small class="block text-sm font-semibold text-muted mb-1">Yeni Şikayet</small>
       <strong class="text-2xl text-primary">{{ new_complaints }}</strong>
    </div>
-   <div class="card p-5 border-l-4 border-green-700 bg-card rounded-xl">
+   <div class="card p-5 border-l-6 border-green-700 bg-card rounded-xl">
       <small class="block text-sm font-semibold text-muted mb-1">Çözülen Şikayet</small>
       <strong class="text-2xl text-primary">{{ resolved_complaints }}</strong>
    </div>
-   <div class="card p-5 border-l-4 border-accent bg-card rounded-xl">
+   <div class="card p-5 border-l-6 border-accent bg-card rounded-xl">
       <small class="block text-sm font-semibold text-muted mb-1">Acil Şikayet</small>
       <strong class="text-2xl text-primary">{{ urgent_complaints }}</strong>
    </div>

@@ -3,176 +3,163 @@
 {% block title %}Yeni Sikayet | Sikayet Sistemi{% endblock %}
 
 {% block content %}
+<section class="py-6 mb-8">
+   <div class="max-w-3xl mx-auto px-4 lg:px-0">
+      <!-- Header Section -->
+      <div class="mb-8">
+         <h1 class="text-4xl font-bold text-[var(--color-primary)] mb-3">
+            ➕ Yeni Şikayet Oluştur
+         </h1>
+         <p class="text-lg text-[var(--muted)] leading-relaxed">
+            Sorunu ne kadar net yazarsan, çözüm süreci o kadar hızlı ilerler. Lütfen en az bilgiyi sağla.
+         </p>
+      </div>
+
+      <!-- Form Card -->
+      <form method="post" class="bg-[var(--card)] p-8 rounded-2xl shadow-lg border border-gray-100">
+         {% csrf_token %}
+
+         <!-- Title Field -->
+         <div class="mb-6">
+            <label for="{{ form.title.id_for_label }}" class="block text-sm font-bold text-[var(--color-primary)] mb-2">
+               📝 Şikayet Başlığı
+               <span class="text-red-600">*</span>
+            </label>
+            {{ form.title }}
+            {% for error in form.title.errors %}
+               <div class="mt-2 text-sm text-red-600 font-medium flex items-center gap-1">
+                  <span>⚠️</span> {{ error }}
+               </div>
+            {% endfor %}
+            <p class="mt-2 text-xs text-[var(--muted)]">Şikayetin konusunu kısaca özetleyin (min. 5 karakter)</p>
+         </div>
+
+         <!-- Description Field -->
+         <div class="mb-6">
+            <label for="{{ form.description.id_for_label }}" class="block text-sm font-bold text-[var(--color-primary)] mb-2">
+               📋 Detaylı Açıklama
+               <span class="text-red-600">*</span>
+            </label>
+            {{ form.description }}
+            {% for error in form.description.errors %}
+               <div class="mt-2 text-sm text-red-600 font-medium flex items-center gap-1">
+                  <span>⚠️</span> {{ error }}
+               </div>
+            {% endfor %}
+            <p class="mt-2 text-xs text-[var(--muted)]">Ne oldu? Nasıl oldu? Neden sorunlu oldu? Bize anlat.</p>
+         </div>
+
+         <!-- Category -->
+         <div class="mb-6">
+            <label for="{{ form.category.id_for_label }}" class="block text-sm font-bold text-[var(--color-primary)] mb-2">
+               🏷️ Kategori
+               <span class="text-red-600">*</span>
+            </label>
+            {{ form.category }}
+            {% for error in form.category.errors %}
+               <div class="mt-2 text-sm text-red-600 font-medium flex items-center gap-1">
+                  <span>⚠️</span> {{ error }}
+               </div>
+            {% endfor %}
+         </div>
+
+         <!-- Location Section -->
+         <div class="bg-gradient-to-br from-[var(--color-light)] to-[rgba(230,217,182,0.2)] p-6 rounded-xl border-2 border-dashed border-[var(--color-light)] mb-6">
+            <h3 class="text-lg font-bold text-[var(--color-primary)] mb-4 flex items-center gap-2">
+               📍 Konum Bilgisi
+            </h3>
+
+            <!-- City and District -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+               <!-- City -->
+               <div>
+                  <label for="{{ form.city.id_for_label }}" class="block text-sm font-bold text-[var(--color-primary)] mb-2">
+                     İl
+                     <span class="text-red-600">*</span>
+                  </label>
+                  {{ form.city }}
+                  {% for error in form.city.errors %}
+                     <div class="mt-2 text-sm text-red-600 font-medium flex items-center gap-1">
+                        <span>⚠️</span> {{ error }}
+                     </div>
+                  {% endfor %}
+               </div>
+
+               <!-- District -->
+               <div>
+                  <label for="{{ form.district.id_for_label }}" class="block text-sm font-bold text-[var(--color-primary)] mb-2">
+                     İlçe
+                     <span class="text-red-600">*</span>
+                  </label>
+                  {{ form.district }}
+                  {% for error in form.district.errors %}
+                     <div class="mt-2 text-sm text-red-600 font-medium flex items-center gap-1">
+                        <span>⚠️</span> {{ error }}
+                     </div>
+                  {% endfor %}
+               </div>
+            </div>
+
+            <!-- Address -->
+            <div>
+               <label for="{{ form.address.id_for_label }}" class="block text-sm font-bold text-[var(--color-primary)] mb-2">
+                  Adres
+                  <span class="text-red-600">*</span>
+               </label>
+               {{ form.address }}
+               {% for error in form.address.errors %}
+                  <div class="mt-2 text-sm text-red-600 font-medium flex items-center gap-1">
+                     <span>⚠️</span> {{ error }}
+                  </div>
+               {% endfor %}
+               <p class="mt-2 text-xs text-[var(--muted)]">Örn: Mimar Sinan Sokak No:45, Daire 3</p>
+            </div>
+         </div>
+
+         <!-- Action Buttons -->
+         <div class="flex flex-col sm:flex-row gap-3">
+            <button 
+               type="submit" 
+               class="flex-1 bg-[var(--color-primary)] text-white font-bold py-3 px-6 rounded-lg hover:opacity-90 transition duration-200 shadow-md flex items-center justify-center gap-2"
+            >
+               💾 Şikayeti Kaydet
+            </button>
+            <a 
+               href="{% url 'complaint_list' %}" 
+               class="flex-1 bg-gray-200 text-[var(--color-primary)] font-bold py-3 px-6 rounded-lg hover:bg-gray-300 transition duration-200 text-center flex items-center justify-center gap-2"
+            >
+               ❌ Vazgeç
+            </a>
+         </div>
+      </form>
+
+      <!-- Information Box -->
+      <div class="mt-8 bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+         <h4 class="font-bold text-blue-900 mb-2">💡 İpuçları</h4>
+         <ul class="text-sm text-blue-800 space-y-1">
+            <li>✓ Başlıkta önemli ayrıntıları vurgulayın</li>
+            <li>✓ Açıklamada tam adres, zaman ve neler oldu bölün</li>
+            <li>✓ Fotoğraf veya kanıt varsa ekleyin</li>
+            <li>✓ İrtibat bilgileriniz doğru olması önemlidir</li>
+         </ul>
+      </div>
+   </div>
+</section>
+
 <style>
-   .wrap {
-      max-width: 860px;
-      margin: 0 auto;
-   }
-
-   .head {
-      margin-bottom: 14px;
-   }
-
-   .head h1 {
-      margin: 0;
-      color: var(--color-primary);
-   }
-
-   .head p {
-      margin: 6px 0 0;
-      color: var(--muted);
-   }
-
-   .form-box {
-      padding: 18px;
-   }
-
-   .grid {
-      display: grid;
-      gap: 12px;
-   }
-
-   .label {
-      display: block;
-      margin-bottom: 6px;
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: var(--color-primary);
-   }
-
    input[type="text"],
    textarea,
    select {
-      width: 100%;
-      border-radius: 10px;
-      border: 1px solid rgba(64, 81, 59, 0.24);
-      padding: 10px 12px;
-      font: inherit;
-      background: #fff;
+      @apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary)] focus:border-transparent transition bg-white;
    }
 
    textarea {
-      min-height: 120px;
-      resize: vertical;
+      @apply min-h-32 resize-vertical;
    }
 
-   input[type="text"]:focus,
-   textarea:focus,
-   select:focus {
-      outline: 2px solid rgba(98, 129, 65, 0.18);
-      border-color: var(--color-secondary);
-   }
-
-   .two {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-   }
-
-   .location {
-      background: rgba(229, 217, 182, 0.25);
-      border: 1px dashed rgba(64, 81, 59, 0.25);
-      border-radius: 12px;
-      padding: 12px;
-   }
-
-   .actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 8px;
-   }
-
-   .btn {
-      border: 0;
-      border-radius: 999px;
-      padding: 11px 16px;
-      font-weight: 700;
-      text-decoration: none;
-      cursor: pointer;
-   }
-
-   .btn-primary {
-      background: var(--color-primary);
-      color: #fff;
-   }
-
-   .btn-secondary {
-      background: #fff;
-      color: var(--color-primary);
-      border: 1px solid rgba(64, 81, 59, 0.28);
-   }
-
-   .error {
-      color: #b91c1c;
-      font-size: 0.86rem;
-      margin-top: 4px;
-   }
-
-   @media (max-width: 700px) {
-      .two { grid-template-columns: 1fr; }
+   select {
+      @apply cursor-pointer;
    }
 </style>
 
-<div class="wrap">
-   <section class="head">
-      <h1>Yeni Sikayet Olustur</h1>
-      <p>Sorunu ne kadar net yazarsan, cozum sureci o kadar hizli ilerler.</p>
-   </section>
-
-   <form method="post" class="card form-box grid">
-      {% csrf_token %}
-
-      <div>
-         <label class="label" for="{{ form.title.id_for_label }}">Sikayet Basligi</label>
-         {{ form.title }}
-         {% for error in form.title.errors %}<div class="error">{{ error }}</div>{% endfor %}
-      </div>
-
-      <div>
-         <label class="label" for="{{ form.description.id_for_label }}">Detayli Aciklama</label>
-         {{ form.description }}
-         {% for error in form.description.errors %}<div class="error">{{ error }}</div>{% endfor %}
-      </div>
-
-      <div class="two">
-         <div>
-            <label class="label" for="{{ form.category.id_for_label }}">Kategori</label>
-            {{ form.category }}
-            {% for error in form.category.errors %}<div class="error">{{ error }}</div>{% endfor %}
-         </div>
-         <div>
-            <label class="label" for="{{ form.priority.id_for_label }}">Oncelik</label>
-            {{ form.priority }}
-            {% for error in form.priority.errors %}<div class="error">{{ error }}</div>{% endfor %}
-         </div>
-      </div>
-
-      <section class="location">
-         <h3 style="margin:0 0 10px; color: var(--color-primary);">Konum Bilgisi</h3>
-         <div class="two">
-            <div>
-               <label class="label" for="{{ form.city.id_for_label }}">Il</label>
-               {{ form.city }}
-               {% for error in form.city.errors %}<div class="error">{{ error }}</div>{% endfor %}
-            </div>
-            <div>
-               <label class="label" for="{{ form.district.id_for_label }}">Ilce</label>
-               {{ form.district }}
-               {% for error in form.district.errors %}<div class="error">{{ error }}</div>{% endfor %}
-            </div>
-         </div>
-         <div>
-            <label class="label" for="{{ form.address.id_for_label }}">Adres</label>
-            {{ form.address }}
-            {% for error in form.address.errors %}<div class="error">{{ error }}</div>{% endfor %}
-         </div>
-      </section>
-
-      <div class="actions">
-         <button class="btn btn-primary" type="submit">Sikayeti Kaydet</button>
-         <a class="btn btn-secondary" href="{% url 'complaint_list' %}">Vazgec</a>
-      </div>
-   </form>
-</div>
 {% endblock %}

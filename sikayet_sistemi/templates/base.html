@@ -1,51 +1,209 @@
 ﻿{% load static %}
 <!doctype html>
 <html lang="tr">
-<head>
-   <meta charset="UTF-8" />
-   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-   <title>{% block title %}Şikayet Sistemi{% endblock %}</title>
-   <link rel="stylesheet" href="{% static 'dist/output.css' %}">
-   <style>
-      :root {
-         --color-primary: #40513b;
-         --color-secondary: #628141;
-         --color-light: #e5d9b6;
-         --color-accent: #e67e22;
-         --bg: #f7f4ea;
-         --card: #fffdf7;
-         --text: #1f2a1d;
-         --muted: #5e6b5a;
-      }
-   </style>
-</head>
-<body class="font-inter min-h-screen flex flex-col bg-gradient-to-bl from-bg to-light text-[var(--text)] ">
+   <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>{% block title %}Şikayet Sistemi{% endblock %}</title>
+      <link rel="stylesheet" href="{% static 'dist/output.css' %}" />
+      <style>
+         * {
+            font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+         }
+         :root {
+            --color-primary: #40513b;
+            --color-secondary: #628141;
+            --color-light: #e5d9b6;
+            --color-accent: #e67e22;
+            --bg: #f7f4ea;
+            --card: #fffdf7;
+            --text: #1f2a1d;
+            --muted: #5e6b5a;
+         }
+         html,
+         body {
+            margin: 0;
+            padding: 0;
+         }
+         body {
+            background: linear-gradient(
+               135deg,
+               var(--bg) 0%,
+               rgba(230, 217, 182, 0.3) 100%
+            );
+         }
+      </style>
+   </head>
+   <body class="m-0 p-0 min-h-screen flex flex-col text-[var(--text)]">
+      <!-- Navbar -->
+      <header
+         class="fixed top-0 left-0 right-0 z-50 bg-[var(--color-primary)] shadow-lg border-b-4 border-[var(--color-secondary)]">
+         <div
+            class="max-w-7xl mx-auto flex justify-between items-center py-4 px-4 lg:px-0">
+            <!-- Logo -->
+            <a
+               href="{% url 'home' %}"
+               class="flex items-center gap-2 text-white font-bold text-xl md:text-2xl hover:opacity-80 transition duration-200">
+               <span class="text-3xl">📋</span>
+               <span class="hidden sm:inline">Şikayet Sistemi</span>
+               <span class="sm:hidden">Şikayetler</span>
+            </a>
 
-   <!-- Navbar -->
-   <header class="fixed top-0 w-full z-50 bg-[var(--color-primary)] shadow">
-      <div class="container mx-auto flex justify-between items-center py-4 px-4 md:px-0">
-         <a href="/" class="text-white font-bold text-xl md:text-2xl">Şikayet Sistemi</a>
-         <ul class="flex gap-6 text-white">
-            <li><a href="#" class="hover:text-[var(--color-accent)] transition-colors">Ana Sayfa</a></li>
-            <li><a href="#" class="hover:text-[var(--color-accent)] transition-colors">Şikayetler</a></li>
-            <li><a href="#" class="hover:text-[var(--color-accent)] transition-colors">Yeni Şikayet</a></li>
-            <li><a href="#" class="hover:text-[var(--color-accent)] transition-colors">Giriş / Kayıt</a></li>
-         </ul>
-      </div>
-   </header>
+            <!-- Navigation Menu -->
+            <nav class="flex items-center gap-1 md:gap-2">
+               <ul class="hidden md:flex gap-1">
+                  <li>
+                     <a
+                        href="{% url 'home' %}"
+                        class="text-white px-4 py-2 rounded-lg hover:bg-[var(--color-secondary)] transition duration-200 font-medium">
+                        🏠 Ana Sayfa
+                     </a>
+                  </li>
+                  <li>
+                     <a
+                        href="{% url 'complaint_list' %}"
+                        class="text-white px-4 py-2 rounded-lg hover:bg-[var(--color-secondary)] transition duration-200 font-medium">
+                        📝 Şikayetler
+                     </a>
+                  </li>
+                  <li>
+                     <a
+                        href="{% url 'complaint_create' %}"
+                        class="text-white px-4 py-2 rounded-lg hover:bg-[var(--color-secondary)] transition duration-200 font-medium">
+                        ➕ Yeni Şikayet
+                     </a>
+                  </li>
+                  <li>
+                     <a
+                        href="#"
+                        class="text-white px-4 py-2 rounded-lg hover:bg-[var(--color-secondary)] transition duration-200 font-medium">
+                        👤 Hesap
+                     </a>
+                  </li>
+               </ul>
 
-   <!-- Main Content -->
-   <main class="flex-1 container mx-auto px-4 md:px-0 pt-28">
-      {% block content %}{% endblock %}
-   </main>
+               <!-- Mobile Menu Toggle (Hamburger) -->
+               <button
+                  class="md:hidden text-white p-2 hover:bg-[var(--color-secondary)] rounded-lg transition duration-200"
+                  aria-label="Menu aç/kapat">
+                  <svg
+                     class="w-6 h-6"
+                     fill="none"
+                     stroke="currentColor"
+                     viewBox="0 0 24 24">
+                     <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M4 6h16M4 12h16M4 18h16"></path>
+                  </svg>
+               </button>
+            </nav>
+         </div>
+      </header>
 
-   <!-- Footer -->
-   <footer class="bg-[var(--color-secondary)] text-white py-4 mt-8">
-      <div class="container mx-auto text-center text-sm font-semibold">
-         &copy; 2026 Şikayet Sistemi | Tüm Hakları Saklıdır
-      </div>
-   </footer>
+      <!-- Main Content -->
+      <main class="flex-1 w-full max-w-7xl mx-auto px-4 lg:px-0 py-8 pt-24">
+         {% block content %}{% endblock %}
+      </main>
 
-   {% block extra_js %}{% endblock %}
-</body>
+      <!-- Footer -->
+      <footer
+         class="bg-[var(--color-primary)] text-white mt-12 border-t-4 border-[var(--color-secondary)]">
+         <div class="max-w-7xl mx-auto px-4 lg:px-0 py-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+               <!-- About Section -->
+               <div>
+                  <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+                     <span class="text-2xl">📋</span> Şikayet Sistemi
+                  </h3>
+                  <p class="text-gray-200 text-sm leading-relaxed">
+                     Yerel sorunları bildirin ve topluluk tarafından desteklenen
+                     çözümleri izleyin.
+                  </p>
+               </div>
+
+               <!-- Quick Links -->
+               <div>
+                  <h4 class="text-lg font-bold mb-4">Hızlı Bağlantılar</h4>
+                  <ul class="space-y-2 text-sm">
+                     <li>
+                        <a
+                           href="#"
+                           class="text-gray-200 hover:text-white transition duration-200"
+                           >→ Ana Sayfa</a
+                        >
+                     </li>
+                     <li>
+                        <a
+                           href="#"
+                           class="text-gray-200 hover:text-white transition duration-200"
+                           >→ Şikayetleri Listele</a
+                        >
+                     </li>
+                     <li>
+                        <a
+                           href="#"
+                           class="text-gray-200 hover:text-white transition duration-200"
+                           >→ Yeni Şikayet Oluştur</a
+                        >
+                     </li>
+                     <li>
+                        <a
+                           href="#"
+                           class="text-gray-200 hover:text-white transition duration-200"
+                           >→ İletişim</a
+                        >
+                     </li>
+                  </ul>
+               </div>
+
+               <!-- Contact Info -->
+               <div>
+                  <h4 class="text-lg font-bold mb-4">İletişim</h4>
+                  <ul class="space-y-2 text-sm text-gray-200">
+                     <li>
+                        📧
+                        <a
+                           href="mailto:info@sikayetsistemi.com"
+                           class="hover:text-white transition"
+                           >info@sikayetsistemi.com</a
+                        >
+                     </li>
+                     <li>
+                        📞
+                        <a
+                           href="tel:+905551234567"
+                           class="hover:text-white transition"
+                           >+90 555 123 4567</a
+                        >
+                     </li>
+                     <li>🕐 Pazartesi - Cuma: 09:00 - 17:00</li>
+                  </ul>
+               </div>
+            </div>
+
+            <!-- Divider -->
+            <div class="border-t border-gray-600 pt-6">
+               <div
+                  class="flex flex-col md:flex-row justify-between items-center gap-4">
+                  <p class="text-sm text-gray-300 text-center md:text-left">
+                     &copy; 2026 Şikayet Sistemi | Tüm Hakları Saklıdır
+                  </p>
+                  <div class="flex gap-4 text-gray-300 text-sm">
+                     <a href="#" class="hover:text-white transition"
+                        >Gizlilik Politikası</a
+                     >
+                     <span class="text-gray-600">•</span>
+                     <a href="#" class="hover:text-white transition"
+                        >Kullanım Şartları</a
+                     >
+                  </div>
+               </div>
+            </div>
+         </div>
+      </footer>
+
+      {% block extra_js %}{% endblock %}
+   </body>
 </html>

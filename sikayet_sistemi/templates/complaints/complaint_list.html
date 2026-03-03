@@ -1,295 +1,415 @@
-﻿{% extends 'base.html' %}
-
-{% block title %}Sikayet Listesi | Sikayet Sistemi{% endblock %}
-
+﻿{% extends 'base.html' %} 
+{% block title %}Sikayet Listesi | Sikayet Sistemi{%endblock %} 
 {% block content %}
-<style>
-   .section-head {
-      margin-bottom: 16px;
-   }
-
-   .section-head h1 {
-      margin: 0;
-      color: var(--color-primary);
-      font-size: 1.9rem;
-   }
-
-   .section-head p {
-      margin: 6px 0 0;
-      color: var(--muted);
-   }
-
-   .filter-box {
-      padding: 16px;
-      margin-bottom: 16px;
-   }
-
-   .filter-grid {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 10px;
-   }
-
-   .field label {
-      display: block;
-      font-size: 0.85rem;
-      margin-bottom: 5px;
-      color: var(--color-primary);
-      font-weight: 700;
-   }
-
-   .field input,
-   .field select {
-      width: 100%;
-      border-radius: 10px;
-      border: 1px solid rgba(64, 81, 59, 0.24);
-      padding: 10px 12px;
-      font: inherit;
-      background: #fff;
-   }
-
-   .field input:focus,
-   .field select:focus {
-      outline: 2px solid rgba(98, 129, 65, 0.18);
-      border-color: var(--color-secondary);
-   }
-
-   .btn-filter {
-      width: 100%;
-      height: 41px;
-      border: 0;
-      border-radius: 10px;
-      background: var(--color-secondary);
-      color: #fff;
-      font-weight: 700;
-      cursor: pointer;
-      margin-top: 22px;
-   }
-
-   .list {
-      display: grid;
-      gap: 12px;
-   }
-
-   .complaint-card {
-      padding: 15px;
-   }
-
-   .row-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: flex-start;
-      margin-bottom: 10px;
-   }
-
-   .row-top h3 {
-      margin: 0;
-      color: var(--color-primary);
-   }
-
-   .tags {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-   }
-
-   .tag {
-      font-size: 0.78rem;
-      border-radius: 999px;
-      padding: 5px 10px;
-      color: #fff;
-      font-weight: 700;
-      background: var(--color-secondary);
-   }
-
-   .tag.urgent { background: var(--color-accent); }
-   .tag.high { background: #d35400; }
-   .tag.low { background: #7f8c7a; }
-   .tag.new { background: var(--color-light); color: var(--color-primary); }
-   .tag.progress { background: #4a90e2; }
-   .tag.done { background: #2f855a; }
-   .tag.reject { background: #c0392b; }
-
-   .meta {
-      margin-top: 10px;
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 8px;
-      font-size: 0.88rem;
-      color: var(--muted);
-   }
-
-   .meta div {
-      background: rgba(229, 217, 182, 0.33);
-      border-radius: 10px;
-      padding: 7px 10px;
-   }
-
-   .pagination {
-      margin-top: 18px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-   }
-
-   .pagination a,
-   .pagination span {
-      text-decoration: none;
-      border-radius: 999px;
-      padding: 8px 12px;
-      border: 1px solid rgba(64, 81, 59, 0.18);
-      color: var(--color-primary);
-      font-weight: 700;
-      font-size: 0.88rem;
-      background: #fff;
-   }
-
-   .pagination span {
-      background: var(--color-light);
-      border-color: transparent;
-   }
-
-   @media (max-width: 980px) {
-      .filter-grid {
-         grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .meta {
-         grid-template-columns: 1fr;
-      }
-   }
-
-   @media (max-width: 600px) {
-      .filter-grid {
-         grid-template-columns: 1fr;
-      }
-
-      .btn-filter {
-         margin-top: 0;
-      }
-
-      .row-top {
-         flex-direction: column;
-      }
-   }
-</style>
-
-<section class="section-head">
-   <h1>Tum Sikayetler</h1>
-   <p><strong>{{ complaints.paginator.count }}</strong> kayit bulundu.</p>
-</section>
-
-<section class="card filter-box">
-   <form method="get" class="filter-grid">
-      <div class="field">
-         <label for="search">Ara</label>
-         <input id="search" type="text" name="search" value="{{ search_query }}" placeholder="Baslik, aciklama, ilce">
+<section class="py-6 mb-6">
+   <div class="max-w-7xl mx-auto px-4 lg:px-0">
+      <!-- Header -->
+      <div class="mb-8">
+         <h1 class="text-4xl font-bold text-[var(--color-primary)] mb-2">
+            Tüm Şikayetler
+         </h1>
+         <p class="text-[var(--muted)] text-lg">
+            <strong class="text-[var(--color-primary)]"
+               >{{ complaints.paginator.count }}</strong
+            >
+            şikayet kaydı bulunmaktadır
+         </p>
       </div>
 
-      <div class="field">
-         <label for="status">Durum</label>
-         <select id="status" name="status">
-            <option value="">Tum durumlar</option>
-            <option value="new" {% if selected_status == 'new' %}selected{% endif %}>Yeni</option>
-            <option value="in_progress" {% if selected_status == 'in_progress' %}selected{% endif %}>Inceleniyor</option>
-            <option value="resolved" {% if selected_status == 'resolved' %}selected{% endif %}>Cozuldu</option>
-            <option value="rejected" {% if selected_status == 'rejected' %}selected{% endif %}>Reddedildi</option>
-         </select>
-      </div>
-
-      <div class="field">
-         <label for="priority">Oncelik</label>
-         <select id="priority" name="priority">
-            <option value="">Tum oncelikler</option>
-            <option value="low" {% if selected_priority == 'low' %}selected{% endif %}>Dusuk</option>
-            <option value="medium" {% if selected_priority == 'medium' %}selected{% endif %}>Orta</option>
-            <option value="high" {% if selected_priority == 'high' %}selected{% endif %}>Yuksek</option>
-            <option value="urgent" {% if selected_priority == 'urgent' %}selected{% endif %}>Acil</option>
-         </select>
-      </div>
-
-      <div class="field">
-         <label for="category">Kategori</label>
-         <select id="category" name="category">
-            <option value="">Tum kategoriler</option>
-            <option value="infrastructure" {% if selected_category == 'infrastructure' %}selected{% endif %}>Altyapi</option>
-            <option value="traffic" {% if selected_category == 'traffic' %}selected{% endif %}>Trafik</option>
-            <option value="pothole" {% if selected_category == 'pothole' %}selected{% endif %}>Cukur</option>
-            <option value="water" {% if selected_category == 'water' %}selected{% endif %}>Su Kacagi</option>
-            <option value="trash" {% if selected_category == 'trash' %}selected{% endif %}>Cop</option>
-            <option value="other" {% if selected_category == 'other' %}selected{% endif %}>Diger</option>
-         </select>
-      </div>
-
-      <div>
-         <button class="btn-filter" type="submit">Filtrele</button>
-      </div>
-   </form>
-</section>
-
-<section class="list">
-   {% for complaint in complaints %}
-      <article class="card complaint-card">
-         <div class="row-top">
+      <!-- Filter Section -->
+      <div
+         class="bg-[var(--card)] p-6 rounded-2xl shadow-md border border-gray-100 mb-8">
+         <h2 class="text-lg font-bold text-[var(--color-primary)] mb-4">
+            Şikayetleri Filtrele
+         </h2>
+         <form
+            method="get"
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Search Input -->
             <div>
-               <h3><a href="{% url 'complaint_detail' complaint.id %}" style="color:inherit; text-decoration:none;">{{ complaint.title }}</a></h3>
-               <small style="color: var(--muted); font-weight: 700;">{{ complaint.created_at|date:"d.m.Y H:i" }}</small>
+               <label
+                  for="search"
+                  class="block text-sm font-semibold text-[var(--color-primary)] mb-2">
+                  Arama (Başlık, Açıklama, İlçe)
+               </label>
+               <input
+                  id="search"
+                  name="search"
+                  type="text"
+                  value="{{ search_query }}"
+                  placeholder="Ara..."
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary)] focus:border-transparent transition" />
             </div>
 
-            <div class="tags">
-               {% if complaint.priority == 'urgent' %}
-                  <span class="tag urgent">Acil</span>
-               {% elif complaint.priority == 'high' %}
-                  <span class="tag high">Yuksek</span>
-               {% elif complaint.priority == 'low' %}
-                  <span class="tag low">Dusuk</span>
-               {% else %}
-                  <span class="tag">Orta</span>
-               {% endif %}
-
-               {% if complaint.status == 'new' %}
-                  <span class="tag new">Yeni</span>
-               {% elif complaint.status == 'in_progress' %}
-                  <span class="tag progress">Inceleniyor</span>
-               {% elif complaint.status == 'resolved' %}
-                  <span class="tag done">Cozuldu</span>
-               {% else %}
-                  <span class="tag reject">Reddedildi</span>
-               {% endif %}
+            <!-- Status Select -->
+            <div>
+               <label
+                  for="status"
+                  class="block text-sm font-semibold text-[var(--color-primary)] mb-2"
+                  >Durum</label
+               >
+               <select
+                  id="status"
+                  name="status"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary)] focus:border-transparent transition">
+                  <option value="">Tüm durumlar</option>
+                  <option
+                     value="new"
+                     {%
+                     if
+                     selected_status=""
+                     ="new"
+                     %}selected{%
+                     endif
+                     %}>
+                     Yeni
+                  </option>
+                  <option
+                     value="in_progress"
+                     {%
+                     if
+                     selected_status=""
+                     ="in_progress"
+                     %}selected{%
+                     endif
+                     %}>
+                     İnceleniyor
+                  </option>
+                  <option
+                     value="resolved"
+                     {%
+                     if
+                     selected_status=""
+                     ="resolved"
+                     %}selected{%
+                     endif
+                     %}>
+                     Çözüldü
+                  </option>
+                  <option
+                     value="rejected"
+                     {%
+                     if
+                     selected_status=""
+                     ="rejected"
+                     %}selected{%
+                     endif
+                     %}>
+                     Reddedildi
+                  </option>
+               </select>
             </div>
-         </div>
 
-         <p style="line-height:1.55; margin:0 0 10px;">{{ complaint.description|truncatewords:30 }}</p>
+            <!-- Priority Select -->
+            <div>
+               <label
+                  for="priority"
+                  class="block text-sm font-semibold text-[var(--color-primary)] mb-2"
+                  >Öncelik</label
+               >
+               <select
+                  id="priority"
+                  name="priority"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary)] focus:border-transparent transition">
+                  <option value="">Tüm öncelikler</option>
+                  <option
+                     value="low"
+                     {%
+                     if
+                     selected_priority=""
+                     ="low"
+                     %}selected{%
+                     endif
+                     %}>
+                     Düşük
+                  </option>
+                  <option
+                     value="medium"
+                     {%
+                     if
+                     selected_priority=""
+                     ="medium"
+                     %}selected{%
+                     endif
+                     %}>
+                     Orta
+                  </option>
+                  <option
+                     value="high"
+                     {%
+                     if
+                     selected_priority=""
+                     ="high"
+                     %}selected{%
+                     endif
+                     %}>
+                     Yüksek
+                  </option>
+                  <option
+                     value="urgent"
+                     {%
+                     if
+                     selected_priority=""
+                     ="urgent"
+                     %}selected{%
+                     endif
+                     %}>
+                     Acil
+                  </option>
+               </select>
+            </div>
 
-         <div class="meta">
-            <div><strong>Konum:</strong> {{ complaint.district }} / {{ complaint.city }}</div>
-            <div><strong>Kategori:</strong> {{ complaint.get_category_display }}</div>
-            <div><a href="{% url 'complaint_detail' complaint.id %}" style="color:var(--color-accent); font-weight:700; text-decoration:none;">Detaylari Gor</a></div>
+            <!-- Category Select -->
+            <div>
+               <label
+                  for="category"
+                  class="block text-sm font-semibold text-[var(--color-primary)] mb-2"
+                  >Kategori</label
+               >
+               <select
+                  id="category"
+                  name="category"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary)] focus:border-transparent transition">
+                  <option value="">Tüm kategoriler</option>
+                  <option
+                     value="infrastructure"
+                     {%
+                     if
+                     selected_category=""
+                     ="infrastructure"
+                     %}selected{%
+                     endif
+                     %}>
+                     Altyapı
+                  </option>
+                  <option
+                     value="traffic"
+                     {%
+                     if
+                     selected_category=""
+                     ="traffic"
+                     %}selected{%
+                     endif
+                     %}>
+                     Trafik
+                  </option>
+                  <option
+                     value="pothole"
+                     {%
+                     if
+                     selected_category=""
+                     ="pothole"
+                     %}selected{%
+                     endif
+                     %}>
+                     Çukur
+                  </option>
+                  <option
+                     value="water"
+                     {%
+                     if
+                     selected_category=""
+                     ="water"
+                     %}selected{%
+                     endif
+                     %}>
+                     Su Kaçağı
+                  </option>
+                  <option
+                     value="trash"
+                     {%
+                     if
+                     selected_category=""
+                     ="trash"
+                     %}selected{%
+                     endif
+                     %}>
+                     Çöp
+                  </option>
+                  <option
+                     value="other"
+                     {%
+                     if
+                     selected_category=""
+                     ="other"
+                     %}selected{%
+                     endif
+                     %}>
+                     Diğer
+                  </option>
+               </select>
+            </div>
+
+            <!-- Filter Button -->
+            <div class="flex gap-3 md:col-span-2 lg:col-span-4">
+               <button
+                  type="submit"
+                  class="flex-1 bg-[var(--color-secondary)] text-white font-bold py-2 px-4 rounded-lg hover:opacity-90 transition duration-200 shadow-md">
+                  Filtrele
+               </button>
+               <a
+                  href="{% url 'complaint_list' %}"
+                  class="flex-1 bg-gray-200 text-[var(--color-primary)] font-bold py-2 px-4 rounded-lg hover:bg-gray-300 transition duration-200 text-center">
+                  Sıfırla
+               </a>
+            </div>
+         </form>
+      </div>
+
+      <!-- Complaints List -->
+      <div class="space-y-4">
+         {% for complaint in complaints %}
+         <article
+            class="bg-[var(--card)] p-6 rounded-2xl shadow-md border border-gray-100 hover:shadow-lg transition duration-200">
+            <!-- Header with Title and Badges -->
+            <div
+               class="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-4">
+               <div class="flex-1">
+                  <h3
+                     class="text-xl font-bold text-[var(--color-primary)] mb-1">
+                     <a
+                        href="{% url 'complaint_detail' complaint.id %}"
+                        class="hover:text-[var(--color-secondary)] transition">
+                        {{ complaint.title }}
+                     </a>
+                  </h3>
+                  <time class="text-sm text-[var(--muted)] font-medium">
+                     📅 {{ complaint.created_at|date:"d.m.Y H:i" }}
+                  </time>
+               </div>
+
+               <!-- Badges -->
+               <div class="flex flex-wrap gap-2">
+                  <!-- Priority Badge -->
+                  {% if complaint.priority == 'urgent' %}
+                  <span
+                     class="inline-flex items-center gap-1 bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-bold border border-red-200">
+                     🔴 Acil
+                  </span>
+                  {% elif complaint.priority == 'high' %}
+                  <span
+                     class="inline-flex items-center gap-1 bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs font-bold border border-orange-200">
+                     🟠 Yüksek
+                  </span>
+                  {% elif complaint.priority == 'low' %}
+                  <span
+                     class="inline-flex items-center gap-1 bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold border border-green-200">
+                     🟢 Düşük
+                  </span>
+                  {% else %}
+                  <span
+                     class="inline-flex items-center gap-1 bg-[var(--color-light)] text-[var(--color-primary)] px-3 py-1 rounded-full text-xs font-bold border border-yellow-300">
+                     🟡 Orta
+                  </span>
+                  {% endif %}
+
+                  <!-- Status Badge -->
+                  {% if complaint.status == 'new' %}
+                  <span
+                     class="inline-flex items-center gap-1 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-bold border border-blue-200">
+                     ✨ Yeni
+                  </span>
+                  {% elif complaint.status == 'in_progress' %}
+                  <span
+                     class="inline-flex items-center gap-1 bg-cyan-100 text-cyan-800 px-3 py-1 rounded-full text-xs font-bold border border-cyan-200">
+                     ⏳ İnceleniyor
+                  </span>
+                  {% elif complaint.status == 'resolved' %}
+                  <span
+                     class="inline-flex items-center gap-1 bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold border border-green-200">
+                     ✅ Çözüldü
+                  </span>
+                  {% else %}
+                  <span
+                     class="inline-flex items-center gap-1 bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-bold border border-red-200">
+                     ❌ Reddedildi
+                  </span>
+                  {% endif %}
+               </div>
+            </div>
+
+            <!-- Description -->
+            <p class="text-[var(--muted)] mb-4 line-clamp-2 leading-relaxed">
+               {{ complaint.description }}
+            </p>
+
+            <!-- Info Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+               <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                  <span
+                     class="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide"
+                     >📍 Konum</span
+                  >
+                  <p
+                     class="text-sm font-medium text-[var(--color-primary)] mt-1">
+                     {{ complaint.district }} / {{ complaint.city }}
+                  </p>
+               </div>
+               <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                  <span
+                     class="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide"
+                     >🏷️ Kategori</span
+                  >
+                  <p
+                     class="text-sm font-medium text-[var(--color-primary)] mt-1">
+                     {{ complaint.get_category_display }}
+                  </p>
+               </div>
+               <div
+                  class="bg-[var(--color-light)] bg-opacity-40 p-3 rounded-lg border border-yellow-200">
+                  <a
+                     href="{% url 'complaint_detail' complaint.id %}"
+                     class="inline-flex items-center gap-2 font-bold text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition">
+                     Detayları Gör →
+                  </a>
+               </div>
+            </div>
+         </article>
+         {% empty %}
+         <div class="text-center py-12">
+            <p class="text-[var(--muted)] text-lg">
+               😔 Filtreye uygun şikayet bulunamadı. Lütfen filtreleri kontrol
+               ediniz.
+            </p>
          </div>
-      </article>
-   {% empty %}
-      <article class="card complaint-card">
-         <p style="margin:0; color: var(--muted);">Sonuca uygun sikayet bulunamadi.</p>
-      </article>
-   {% endfor %}
+         {% endfor %}
+      </div>
+
+      <!-- Pagination -->
+      {% if is_paginated %}
+      <nav class="flex justify-center items-center gap-2 mt-8 flex-wrap">
+         {% if page_obj.has_previous %}
+         <a
+            href="?page=1&search={{ search_query }}&status={{ selected_status }}&priority={{ selected_priority }}&category={{ selected_category }}"
+            class="px-4 py-2 rounded-lg border border-gray-300 bg-white text-[var(--color-primary)] font-bold hover:bg-gray-100 transition duration-200">
+            ⏮️ İlk
+         </a>
+         <a
+            href="?page={{ page_obj.previous_page_number }}&search={{ search_query }}&status={{ selected_status }}&priority={{ selected_priority }}&category={{ selected_category }}"
+            class="px-4 py-2 rounded-lg border border-gray-300 bg-white text-[var(--color-primary)] font-bold hover:bg-gray-100 transition duration-200">
+            ◀️ Önceki
+         </a>
+         {% endif %}
+
+         <span
+            class="px-4 py-2 rounded-lg bg-[var(--color-secondary)] text-white font-bold">
+            {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+         </span>
+
+         {% if page_obj.has_next %}
+         <a
+            href="?page={{ page_obj.next_page_number }}&search={{ search_query }}&status={{ selected_status }}&priority={{ selected_priority }}&category={{ selected_category }}"
+            class="px-4 py-2 rounded-lg border border-gray-300 bg-white text-[var(--color-primary)] font-bold hover:bg-gray-100 transition duration-200">
+            Sonraki ▶️
+         </a>
+         <a
+            href="?page={{ page_obj.paginator.num_pages }}&search={{ search_query }}&status={{ selected_status }}&priority={{ selected_priority }}&category={{ selected_category }}"
+            class="px-4 py-2 rounded-lg border border-gray-300 bg-white text-[var(--color-primary)] font-bold hover:bg-gray-100 transition duration-200">
+            Son ⏭️
+         </a>
+         {% endif %}
+      </nav>
+      {% endif %}
+   </div>
 </section>
-
-{% if is_paginated %}
-   <nav class="pagination">
-      {% if page_obj.has_previous %}
-         <a href="?page=1&search={{ search_query }}&status={{ selected_status }}&priority={{ selected_priority }}&category={{ selected_category }}">Ilk</a>
-         <a href="?page={{ page_obj.previous_page_number }}&search={{ search_query }}&status={{ selected_status }}&priority={{ selected_priority }}&category={{ selected_category }}">Onceki</a>
-      {% endif %}
-
-      <span>{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
-
-      {% if page_obj.has_next %}
-         <a href="?page={{ page_obj.next_page_number }}&search={{ search_query }}&status={{ selected_status }}&priority={{ selected_priority }}&category={{ selected_category }}">Sonraki</a>
-         <a href="?page={{ page_obj.paginator.num_pages }}&search={{ search_query }}&status={{ selected_status }}&priority={{ selected_priority }}&category={{ selected_category }}">Son</a>
-      {% endif %}
-   </nav>
-{% endif %}
 {% endblock %}
