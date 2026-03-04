@@ -1,3 +1,4 @@
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, DetailView, CreateView
 from django.urls import reverse_lazy
@@ -14,7 +15,7 @@ def home(request):
     urgent_complaints = Complaint.objects.filter(priority='urgent').count()
 
     # Son 5 şikayeti al
-    recent_complaints = Complaint.objects.all()[:5]
+    recent_complaints = Complaint.objects.all().order_by('-created_at')[:5]
 
     # En sık şikayet kategorileri
     categories = Complaint.objects.values('category').annotate(count=Count('category')).order_by('-count')[:5]
@@ -37,9 +38,8 @@ class ComplaintListView(ListView):
     paginate_by = 20
 
     def get_queryset(self):
-        queryset = Complaint.objects.all()
+        queryset = Complaint.objects.all().order_by('-created_at')
         
-        # Arama
         search_query = self.request.GET.get('search', '')
         if search_query:
             queryset = queryset.filter(
@@ -47,8 +47,8 @@ class ComplaintListView(ListView):
                 Q(description__icontains=search_query) |
                 Q(district__icontains=search_query)
             )
-        
-        # Filtreleme
+        #filtreleme seçenekleri
+
         status = self.request.GET.get('status', '')
         if status:
             queryset = queryset.filter(status=status)
@@ -62,7 +62,7 @@ class ComplaintListView(ListView):
             queryset = queryset.filter(category=category)
 
         return queryset
-
+    # Arama ve filtreleme seçeneklerini şablona göndermek için context'e ekleyelim
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['search_query'] = self.request.GET.get('search', '')
@@ -84,6 +84,30 @@ class ComplaintCreateView(CreateView):
     template_name = 'complaints/complaint_form.html'
     success_url = reverse_lazy('complaint_list')
 
+    def post(self, request, *args, **kwargs):
+        # 1. Gelen form verilerini kopyalıyoruz
+        data = request.POST.copy()
+        
+        # 2. ÖNEMLİ: Eğer 'priority' (öncelik) seçilmemişse manuel olarak 'medium' atıyoruz
+        # Bu işlem formun 'is_valid' kontrolünden ÖNCE gerçekleştiği için hatayı engeller.
+        if not data.get('priority'):
+            data['priority'] = 'medium'
+        
+        # 3. Düzenlenmiş veriyi Django'nun orijinal POST verisiyle değiştiriyoruz
+        request.POST = data
+        # 4. Şimdi formu normal şekilde işleyebiliriz
+        return super().post(request, *args, **kwargs)
+    # Form doğrulama ve hata durumlarını loglamak için form_valid ve form_invalid metodlarını override ediyoruz
+
     def form_valid(self, form):
+        # Kullanıcıyı bağla
+        
         form.instance.user = self.request.user if self.request.user.is_authenticated else None
+        print("\n>>> BAŞARI: Form doğrulandı ve kaydediliyor... <<<")
         return super().form_valid(form)
+
+    def form_invalid(self, form):
+        print("\n!!! HATA: Form geçersiz! Detaylar: !!!")
+        print(form.errors)
+        return super().form_invalid(form)
+    
