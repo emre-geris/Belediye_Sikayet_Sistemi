@@ -4,7 +4,6 @@
 
 {% block content %}
 
-<!-- Hero Section -->
 <section class="bg-gradient-to-br from-primary/95 to-secondary/90 text-card rounded-2xl shadow-lg p-7 md:p-12 mb-6">
    <h1 class="text-3xl md:text-4xl font-bold mb-3">İlçe Bazlı Şikayet Takip Platformu</h1>
    <p class="max-w-3xl text-base md:text-lg leading-relaxed mb-5 text-[var(--color-light)]">
@@ -16,7 +15,6 @@
    </div>
 </section>
 
-<!-- Stats Section -->
 <section class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
    <div class="card p-5 border-l-6 border-primary bg-card rounded-xl">
       <small class="block text-sm font-semibold text-muted mb-1">Toplam Şikayet</small>
@@ -36,10 +34,13 @@
    </div>
 </section>
 
-<!-- Main Grid: Complaints + Roadmap -->
 <h2 class="text-xl font-bold text-primary mb-4">Hızlı Bakış</h2>
-<section class="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-6 ">
-   <!-- Recent Complaints -->
+<section class="grid grid-cols-1 lg:grid-cols-[1fr_1.4fr] gap-6"> <aside class="card p-5 space-y-4 bg-card rounded-xl flex flex-col justify-center">
+      <div class="h-full min-h-[300px] rounded-xl border-2 border-dashed border-primary/20 grid place-items-center text-primary/30 font-bold">
+          Harita veya Modül Alanı
+      </div>
+   </aside>
+
    <article class="card p-5 space-y-4 bg-card rounded-xl">
       <h3 class="text-lg font-extrabold text-primary">Son Şikayetler</h3>
       {% if recent_complaints %}
@@ -67,26 +68,5 @@
       {% endif %}
    </article>
 
-   <!-- Roadmap + Map -->
-   <aside class="card p-5 space-y-4 bg-card rounded-xl">
-      <h3 class="text-lg font-extrabold text-primary">Proje Yol Haritası</h3>
-      <div class="space-y-2">
-         <div class="border-b border-primary/20 pb-2">
-            <strong>1. Aşama (Hazır)</strong>
-            <p class="text-sm">Kayıt oluşturma, listeleme, detay sayfası.</p>
-         </div>
-         <div class="border-b border-primary/20 pb-2">
-            <strong>2. Aşama (Sonraki)</strong>
-            <p class="text-sm">Şikayetleri NLP ile öncelik skoruna göre sıralama.</p>
-         </div>
-         <div class="border-b border-primary/20 pb-2">
-            <strong>3. Aşama (Plan)</strong>
-            <p class="text-sm">İlçe bazlı haritada durum renkleriyle görselleştirme.</p>
-         </div>
-      </div>
-      <div class="h-48 rounded-xl border-2 border-dashed border-primary/40 grid place-items-center text-primary font-bold mt-3">
-         Harita Modül Taslak Alanı
-      </div>
-   </aside>
 </section>
 {% endblock %}
