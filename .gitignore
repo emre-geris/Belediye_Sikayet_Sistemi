@@ -2,10 +2,20 @@
 # Python
 # =========================
 venv/
+.venv/
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
 db.sqlite3
 .env
+*.log
+
+# =========================
+# Django / Static / Media
+# =========================
+media/
+staticfiles/
 
 # =========================
 # Node / Tailwind
@@ -18,6 +28,12 @@ build/
 npm-debug.log*
 
 # =========================
+# NLP / ML / AI Files
+# =========================
+*.pkl          # Modeller (joblib dump)
+*.csv          # Veri setleri (sikayetler.csv, sikayetler_dengeli.csv, vb.)
+
+# =========================
 # IDE
 # =========================
 .vscode/
@@ -27,3 +43,4 @@ npm-debug.log*
 # OS
 # =========================
 .DS_Store
+Thumbs.db

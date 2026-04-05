@@ -30,12 +30,7 @@ class CustomUser(AbstractUser):
     address = models.TextField(
         verbose_name='Adres'
     )
-    company = models.CharField(
-        max_length=255,
-        blank=True,
-        null=True,
-        verbose_name='Şirket/Kuruluş'
-    )
+   
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name='Oluşturulma Tarihi'
