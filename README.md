@@ -108,8 +108,4 @@ Bu proje akademik amaçlı geliştirilmiştir.
 
 ## Geliştiriciler
 
-**Emre Geriş**
-**Berkay Öztürk**
-**Bilal Khanzar**
-**Muhammed Emir Tel**
-**Hasan Erkeş**
+**Emre Geriş** - **Berkay Öztürk** - **Bilal Khanzar** - **Muhammed Emir Tel** - **Hasan Erkeş**
