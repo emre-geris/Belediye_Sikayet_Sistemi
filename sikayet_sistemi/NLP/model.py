@@ -1,4 +1,9 @@
+import sys
+import typing
+# Zemberek (antlr4) ve Python 3.13 Uyumsuzluğu İçin Sihirli Yama
+sys.modules['typing.io'] = typing
 import pandas as pd
+import numpy as np
 # -*- coding: utf-8 -*-
 from unicode_tr import unicode_tr
 import re
@@ -6,37 +11,32 @@ from zemberek import TurkishSentenceExtractor, TurkishTokenizer
 from zemberek.tokenization.token import Token
 import nltk
 from nltk.corpus import stopwords
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics import classification_report
+from gensim.models import Word2Vec
 from sklearn.model_selection import train_test_split
 from sklearn.svm import LinearSVC
 import joblib
 
-# Veri Setini Yükleme ve CSV'ye Kaydetme
-
+# 1. Veri Setini Yükleme ve CSV'ye Kaydetme
 df = pd.read_csv("sikayetler_oncelikli.csv")
 texts = df["text"]
 y_kategori = df["label"]
 y_oncelik = df["önem derecesi"]  
-nltk.download('stopwords')
+nltk.download('stopwords', quiet=True)
 stopwords_list = set(stopwords.words('turkish'))
 print(f"Eğitime giren toplam şikayet sayısı: {len(df)}")
-# Veri Ön İşleme
 
+# 2. Veri Ön İşleme
 def clean_text(texts):
     unwanted_list = [u"&bull;", u"&lsquo;",u",",u"?",u"!",u'"',u"'",u"‘",u"’",u"/",u"<",u">",u"|",u"“",";","&","(",")","=","+","-","\\","*",":","~","@","."]
     alpha_list = [u"a",u"b",u"c",u"ç",u"d",u"e",u"f",u"g",u"ğ",u"h",u"ı",u"i",u"j",u"k",u"l",u"m",u"n",u"o",u"ö",u"p",u"q",u"r",u"s",u"ş",u"t",u"u",u"ü",u"v",u"w",u"x",u"y",u"z"," ",]
 
-    # küçük harfe çeviriliyor
     sentences = unicode_tr(texts).lower()
     txt = sentences.replace(u"â", u"a").lower()
     
-    # farklı karakterler siliniyor
     for unwanted_char in unwanted_list:
-        # txt = txt.replace(uw,' ')
-        # "Ankara'da" gibi tırnak kaldırıldığında "Ankara da" şeklinde oluşan aradaki boşluk birleştirildi.
         txt = txt.replace(unwanted_char, "")
 
-    # geçerli harf listesi dışındaki harfler siliniyor
     chars = list(set(txt))
     for char in chars:
         if not char in alpha_list:
@@ -50,80 +50,93 @@ def remove_URL(texts):
     return text_clean
 
 def remove_email(texts):
-    pattern_email = "\S*@\S*\s?"
+    pattern_email = r"\S*@\S*\s?"
     text_clean = re.sub(pattern_email, "", texts)
     return text_clean
 
-# Cümle Ayırma ve Tokenizasyon
-
+# 3. Cümle Ayırma ve Tokenizasyon (Hata 1 Düzeltildi)
+print("\n⚙️ Zemberek ile şikayetler tokenlara ayrılıyor...")
 extractor = TurkishSentenceExtractor()
 tokenizer = TurkishTokenizer.builder().accept_all().ignore_types(
-    [Token.Type.NewLine,
-     Token.Type.SpaceTab,
-     Token.Type.Punctuation]).build()
+    [Token.Type.NewLine, Token.Type.SpaceTab, Token.Type.Punctuation]).build()
+
+tokenized_sentences = [] 
 
 for text in texts:
-    #print(f"Orijinal Şikayet: {text}")
-    #print("-" * 50) 
-    sentences = extractor.from_paragraph(str(text)) # Şikayeti cümlelere ayır
+    sikayet_kelimeleri = [] 
+    sentences = extractor.from_paragraph(str(text)) 
     
     for sentence in sentences:
-        #print(f"Orijinal Cümle: {sentence}") # Şikayetin cümlelerini yazdır
-        tokens = tokenizer.tokenize(sentence) # Cümleleri tokenlara ayır
-        words = [clean_text(token.content) for token in tokens] # Tokenları temizle
-        #print(f"Tokenize Edilmiş Hali: {words}\n") 
+        tokens = tokenizer.tokenize(sentence) 
+        words = [clean_text(token.content) for token in tokens] 
 
-        # Stop Words'leri Kaldırdık
-        #print("words_filtered")
-        words_filtered = []
         for w in words:
-            if w not in stopwords_list:
-                words_filtered.append(w)
+            if w and w not in stopwords_list:
+                sikayet_kelimeleri.append(w) # <-- Boş liste sorunu çözüldü
 
-        # print(words_filtered)
-        # print("\n")
+    tokenized_sentences.append(sikayet_kelimeleri)
                 
-# TF-IDF Vektörizasyonu
+# 4. WORD2VEC Vektörleştirme
+print("🧠 Word2Vec Dil Modeli eğitiliyor...")
+w2v_model = Word2Vec(sentences=tokenized_sentences, vector_size=100, window=5, min_count=1, workers=4)
 
-tfidf = TfidfVectorizer()
-result = tfidf.fit_transform(texts)
+def get_document_vector(words, model, vector_size):
+    valid_words = [word for word in words if word in model.wv.key_to_index]
+    if valid_words:
+        return np.mean(model.wv[valid_words], axis=0)
+    else:
+        return np.zeros(vector_size)
 
-# Veriyi Eğitim ve Test Olarak Ayırma / ML Algoritmalarını Karşılaştırma
+print("📊 Şikayetler Word2Vec üzerinden sayısal vektör matrisine (X) dönüştürülüyor...")
+X = np.array([get_document_vector(words, w2v_model, 100) for words in tokenized_sentences])
 
-#Veriyi %80 Eğitim (Train) ve %20 Test (Sınav) olarak bölüyoruz
-X_train, X_test, y_train, y_test = train_test_split(result, y_kategori, test_size=0.2, random_state=42)
+# 5. EĞİTİM VE TEST SÜRECİ
+X_train, X_test, y_train, y_test, y_onc_train, y_onc_test = train_test_split(
+    X, y_kategori, y_oncelik, test_size=0.2, random_state=42
+)
 
-# 4. Eğitim ve Test Süreci
-
-# Çift Başlı Model Eğitimi
 print("🧠 1. Model Eğitiliyor: Kategori Sınıflandırıcı (SVM)...")
-model_kategori = LinearSVC(class_weight='balanced', max_iter=2000)
-model_kategori.fit(result, y_kategori)
+model_kategori = LinearSVC(class_weight='balanced', max_iter=2000, random_state=42)
+model_kategori.fit(X_train, y_train)
 
 print("🧠 2. Model Eğitiliyor: Aciliyet Sınıflandırıcı (SVM)...")
-model_oncelik = LinearSVC(class_weight='balanced', max_iter=2000)
-model_oncelik.fit(result, y_oncelik)
+model_oncelik = LinearSVC(class_weight='balanced', max_iter=2000, random_state=42)
+model_oncelik.fit(X_train, y_onc_train) 
 
 print("✅ Modeller başarıyla eğitildi ve kullanıma hazır!\n")
 print("-" * 50)
 
-# 4. CANLI TEST (Harita Demosunun Altyapısı)
-# Bu fonksiyon, web sitesinden gelen veriyi arka planda nasıl işleyeceğimizin simülasyonudur.
+print("📊 KATEGORİ MODELİ BAŞARI RAPORU (TEST SETİ):")
+y_kategori_tahmin = model_kategori.predict(X_test)
+print(classification_report(y_test, y_kategori_tahmin))
+
+print("-" * 50)
+
+print("📊 ACİLİYET MODELİ BAŞARI RAPORU (TEST SETİ):")
+y_oncelik_tahmin = model_oncelik.predict(X_test)
+print(classification_report(y_onc_test, y_oncelik_tahmin))
+print("-" * 50)
+
+# 6. CANLI TEST
 def sikayet_analiz_et(yeni_sikayet):
-    temiz_text = clean_text(yeni_sikayet)
-    # 1. Gelen metni aynı TF-IDF filtresinden geçir
-    vektor = tfidf.transform([temiz_text])
+    yeni_kelimeler = []
+    sentences = extractor.from_paragraph(str(yeni_sikayet))
+    for sentence in sentences:
+        tokens = tokenizer.tokenize(sentence)
+        words = [clean_text(token.content) for token in tokens]
+        for w in words:
+            if w and w not in stopwords_list:
+                yeni_kelimeler.append(w)
+                
+    vektor = get_document_vector(yeni_kelimeler, w2v_model, 100).reshape(1, -1)
     
-    # 2. İki modelden de tahmin iste
     tahmin_kategori = model_kategori.predict(vektor)[0]
     tahmin_oncelik = model_oncelik.predict(vektor)[0]
     
-    # 3. Sonucu haritaya (şimdi terminale) bas
     print(f"📝 Gelen Şikayet: '{yeni_sikayet}'")
-    print(f"🔍 Temizlenmiş Hali: '{temiz_text}'")
+    print(f"🔍 Zemberek Çıktısı: {yeni_kelimeler}") # <-- Hata 3 Düzeltildi
     print(f"🏷️ Kategori     : {tahmin_kategori}")
     
-    # Aciliyete göre renk/ikon belirleme mantığı (Haritada çok işimize yarayacak)
     if tahmin_oncelik == 3:
         renk = "🔴 YÜKSEK (Kırmızı Pin)"
     elif tahmin_oncelik == 2:
@@ -133,17 +146,16 @@ def sikayet_analiz_et(yeni_sikayet):
         
     print(f"🚨 Aciliyet     : {tahmin_oncelik} - {renk}\n")
 
-# 5. Modelin Harita Entegrasyonu İçin Kaydedilmesi
+if __name__ == "__main__":
+    # Hızlı bir demo yapalım
+    sikayet_analiz_et("Sokağımızdaki su borusu patladı ve her yeri su bastı, acil yardım lazım!")
 
+# 7. MODELLERİ KAYDETME
 print("\n📦 Modeller harita entegrasyonu için donduruluyor...")
-# 1. Kelime çeviriciyi (Vectorizer) kaydet
-joblib.dump(tfidf, 'vectorizer.pkl')
 
-# 2. Kategori modelini kaydet
+w2v_model.save('word2vec.pkl') 
 joblib.dump(model_kategori, 'model_kategori.pkl')
-
-# 3. Aciliyet modelini kaydet
 joblib.dump(model_oncelik, 'model_oncelik.pkl')
 
-print("✅ 'vectorizer.pkl', 'model_kategori.pkl' ve 'model_oncelik.pkl' dosyaları proje klasörüne başarıyla kaydedildi!")
+print("✅ 'word2vec.pkl', 'model_kategori.pkl' ve 'model_oncelik.pkl' dosyaları başarıyla kaydedildi!")
 print("🚀 Artık harita backend'i bu zekayı kullanabilir.")
