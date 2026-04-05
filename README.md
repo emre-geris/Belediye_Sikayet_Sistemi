@@ -8,14 +8,13 @@ Vatandaşların belediyeye şikayet ve talep iletebileceği, yapay zeka destekli
 
 Belediye Şikayet Sistemi; vatandaşların belediye hizmetleriyle ilgili şikayetlerini kolayca iletmesini, yetkililerin bu şikayetleri etkin biçimde yönetmesini ve yapay zeka destekli analizlerle süreçlerin iyileştirilmesini sağlar.
 
-Sistem; doğal dil işleme (NLP), harita görselleştirme ve Google Gemini AI entegrasyonu ile modern bir şikayet yönetimi deneyimi sunar.
+Sistem; doğal dil işleme (NLP), harita görselleştirme ile modern bir şikayet yönetimi deneyimi sunar.
 
 ---
 
 ## Özellikler
 
 - **Şikayet Gönderme** — Vatandaşlar kategori seçerek şikayetlerini kolayca iletebilir
-- **AI Destekli Analiz** — Google Gemini AI ile şikayetlerin otomatik analizi ve önceliklendirme
 - **Harita Görselleştirme** — Folium ile şikayetlerin harita üzerinde görüntülenmesi
 - **Türkçe NLP** — Zemberek ve NLTK ile Türkçe metin işleme ve kategori tespiti
 - **İstatistik & Raporlama** — Şikayet yoğunluğu, durum takibi ve istatistiksel göstergeler
@@ -29,7 +28,7 @@ Sistem; doğal dil işleme (NLP), harita görselleştirme ve Google Gemini AI en
 | Katman | Teknoloji |
 |--------|-----------|
 | **Backend** | Django 6.0, Python |
-| **Yapay Zeka** | Google Gemini AI, Transformers, Scikit-learn |
+| **Yapay Zeka** | Transformers, Scikit-learn |
 | **NLP** | Zemberek (Türkçe), NLTK, NLTK Stopwords |
 | **Harita** | Folium, Branca |
 | **Veri İşleme** | Pandas, NumPy, Matplotlib |
