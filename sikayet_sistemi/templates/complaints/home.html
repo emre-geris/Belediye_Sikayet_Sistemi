@@ -1,74 +1,127 @@
-﻿{% extends 'base.html' %}
+﻿{% extends 'base.html' %} {% load static %} {% block title %}Ana Sayfa | Sikayet
+Sistemi{% endblock %} {% block content %}
 
-{% block title %}Ana Sayfa | Sikayet Sistemi{% endblock %}
-
-{% block content %}
-
-<section class="bg-gradient-to-br from-primary/95 to-secondary/90 text-card rounded-2xl shadow-lg p-7 md:p-12 mb-6">
-   <h1 class="text-3xl md:text-4xl font-bold mb-3">İlçe Bazlı Şikayet Takip Platformu</h1>
-   <p class="max-w-3xl text-base md:text-lg leading-relaxed mb-5 text-[var(--color-light)]">
-      Vatandaşlar şikayetlerini girer, sistem kayıt altına alır, listeler ve ilerleyen aşamada NLP ile önceliklendirme + harita tabanlı görünüm eklenir. Bu ekran proje için temel taslaktır.
+<section
+   class="bg-gradient-to-br from-primary/95 to-secondary/90 text-card rounded-2xl shadow-lg p-7 md:p-12 mb-6">
+   <h1 class="text-3xl md:text-4xl font-bold mb-3">
+      İlçe Bazlı Şikayet Takip Platformu
+   </h1>
+   <p
+      class="max-w-3xl text-base md:text-lg leading-relaxed mb-5 text-[var(--color-light)]">
+      Vatandaşlar şikayetlerini girer, sistem kayıt altına alır, listeler ve
+      ilerleyen aşamada NLP ile önceliklendirme + harita tabanlı görünüm
+      eklenir. Bu ekran proje için temel taslaktır.
    </p>
    <div class="flex flex-wrap gap-3">
-      <a href="{% url 'complaint_create' %}" class="bg-accent text-white font-bold py-2 px-5 rounded-full hover:brightness-105 transition">Yeni Şikayet Gir</a>
-      <a href="{% url 'complaint_list' %}" class="border border-white text-white py-2 px-5 rounded-full hover:bg-white/10 transition">Tüm Şikayetler</a>
+      <a
+         href="{% url 'complaint_create' %}"
+         class="bg-accent text-white font-bold py-2 px-5 rounded-full hover:brightness-105 transition"
+         >Yeni Şikayet Gir</a
+      >
+      <a
+         href="{% url 'complaint_list' %}"
+         class="border border-white text-white py-2 px-5 rounded-full hover:bg-white/10 transition"
+         >Tüm Şikayetler</a
+      >
    </div>
 </section>
 
 <section class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
    <div class="card p-5 border-l-6 border-primary bg-card rounded-xl">
-      <small class="block text-sm font-semibold text-muted mb-1">Toplam Şikayet</small>
+      <small class="block text-sm font-semibold text-muted mb-1"
+         >Toplam Şikayet</small
+      >
       <strong class="text-2xl text-primary">{{ total_complaints }}</strong>
    </div>
    <div class="card p-5 border-l-6 border-secondary bg-card rounded-xl">
-      <small class="block text-sm font-semibold text-muted mb-1">Yeni Şikayet</small>
+      <small class="block text-sm font-semibold text-muted mb-1"
+         >Yeni Şikayet</small
+      >
       <strong class="text-2xl text-primary">{{ new_complaints }}</strong>
    </div>
    <div class="card p-5 border-l-6 border-green-700 bg-card rounded-xl">
-      <small class="block text-sm font-semibold text-muted mb-1">Çözülen Şikayet</small>
+      <small class="block text-sm font-semibold text-muted mb-1"
+         >Çözülen Şikayet</small
+      >
       <strong class="text-2xl text-primary">{{ resolved_complaints }}</strong>
    </div>
    <div class="card p-5 border-l-6 border-accent bg-card rounded-xl">
-      <small class="block text-sm font-semibold text-muted mb-1">Acil Şikayet</small>
+      <small class="block text-sm font-semibold text-muted mb-1"
+         >Acil Şikayet</small
+      >
       <strong class="text-2xl text-primary">{{ urgent_complaints }}</strong>
    </div>
 </section>
 
 <h2 class="text-xl font-bold text-primary mb-4">Hızlı Bakış</h2>
-<section class="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-6"> 
-   
-   <aside class="card p-5 space-y-4 bg-card rounded-xl flex flex-col justify-center">
-      <div class="h-full min-h-[300px] rounded-xl border-2 border-dashed border-primary/20 grid place-items-center text-primary/30 font-bold">
-          Harita Modül Taslak Alanı
-      </div>
+<section class="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-6">
+   <aside class="card bg-card rounded-xl" style="height: 500px">
+      <div
+         id="complaint-map"
+         class="w-full h-full rounded-xl"
+         style="z-index: 1"
+         data-complaints='[
+               {% for complaint in recent_complaints %}
+                   {
+                       "id": {{ complaint.id }},
+                       "title": "{{ complaint.title|escapejs }}",
+                       "description": "{{ complaint.description|escapejs }}",
+                       "district": "{{ complaint.district|escapejs }}",
+                       "city": "{{ complaint.city|escapejs }}",
+                       "category": "{{ complaint.category|escapejs }}",
+                       "priority": "{{ complaint.priority|escapejs }}",
+                       "latitude": {{ complaint.latitude|default:"null" }},
+                       "longitude": {{ complaint.longitude|default:"null" }}
+                   }{% if not forloop.last %},{% endif %}
+               {% endfor %}
+           ]'></div>
    </aside>
 
    <article class="card p-5 space-y-4 bg-card rounded-xl">
       <h3 class="text-lg font-extrabold text-primary">Son Şikayetler</h3>
-      {% if recent_complaints %}
-         {% for complaint in recent_complaints %}
-            <div class="p-4 rounded-xl bg-card border border-primary/20">
-               <h4 class="text-base font-semibold mb-2">{{ complaint.title }}</h4>
-               {% if complaint.priority == 'urgent' %}
-                  <span class="inline-block px-2 py-1 text-xs font-bold rounded-full bg-accent text-white">Acil</span>
-               {% elif complaint.priority == 'high' %}
-                  <span class="inline-block px-2 py-1 text-xs font-bold rounded-full bg-orange-700 text-white">Yüksek</span>
-               {% elif complaint.priority == 'low' %}
-                  <span class="inline-block px-2 py-1 text-xs font-bold rounded-full bg-green-400 text-white">Düşük</span>
-               {% else %}
-                  <span class="inline-block px-2 py-1 text-xs font-bold rounded-full bg-secondary text-white">Orta</span>
-               {% endif %}
-               <p class="mt-2 text-sm leading-relaxed">{{ complaint.description|truncatewords:20 }}</p>
-               <div class="flex flex-wrap gap-3 mt-2 text-muted text-xs">
-                  <span>{{ complaint.district }} / {{ complaint.city }}</span>
-                  <a href="{% url 'complaint_detail' complaint.id %}" class="font-semibold text-accent hover:underline">Detay</a>
-               </div>
-            </div>
-         {% endfor %}
-      {% else %}
-         <p class="text-muted">Henüz kayıtlı şikayet yok.</p>
+      {% if recent_complaints %} {% for complaint in recent_complaints %}
+      <div class="p-4 rounded-xl bg-card border border-primary/20">
+         <h4 class="text-base font-semibold mb-2">{{ complaint.title }}</h4>
+         {% if complaint.priority == 'urgent' %}
+         <span
+            class="inline-block px-2 py-1 text-xs font-bold rounded-full bg-accent text-white"
+            >Acil</span
+         >
+         {% elif complaint.priority == 'high' %}
+         <span
+            class="inline-block px-2 py-1 text-xs font-bold rounded-full bg-orange-700 text-white"
+            >Yüksek</span
+         >
+         {% elif complaint.priority == 'low' %}
+         <span
+            class="inline-block px-2 py-1 text-xs font-bold rounded-full bg-green-400 text-white"
+            >Düşük</span
+         >
+         {% else %}
+         <span
+            class="inline-block px-2 py-1 text-xs font-bold rounded-full bg-secondary text-white"
+            >Orta</span
+         >
+         {% endif %}
+         <p class="mt-2 text-sm leading-relaxed">
+            {{ complaint.description|truncatewords:20 }}
+         </p>
+         <div class="flex flex-wrap gap-3 mt-2 text-muted text-xs">
+            <span>{{ complaint.district }} / {{ complaint.city }}</span>
+            <a
+               href="{% url 'complaint_detail' complaint.id %}"
+               class="font-semibold text-accent hover:underline"
+               >Detay</a
+            >
+         </div>
+      </div>
+      {% endfor %} {% else %}
+      <p class="text-muted">Henüz kayıtlı şikayet yok.</p>
       {% endif %}
    </article>
-
 </section>
+
+<!-- Load map script -->
+<script src="{% static 'js/map.js' %}"></script>
+
 {% endblock %}
