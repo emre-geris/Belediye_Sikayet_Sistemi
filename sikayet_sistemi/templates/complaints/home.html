@@ -60,21 +60,7 @@ Sistemi{% endblock %} {% block content %}
          id="complaint-map"
          class="w-full h-full rounded-xl"
          style="z-index: 1"
-         data-complaints='[
-               {% for complaint in recent_complaints %}
-                   {
-                       "id": {{ complaint.id }},
-                       "title": "{{ complaint.title|escapejs }}",
-                       "description": "{{ complaint.description|escapejs }}",
-                       "district": "{{ complaint.district|escapejs }}",
-                       "city": "{{ complaint.city|escapejs }}",
-                       "category": "{{ complaint.category|escapejs }}",
-                       "priority": "{{ complaint.priority|escapejs }}",
-                       "latitude": {{ complaint.latitude|default:"null" }},
-                       "longitude": {{ complaint.longitude|default:"null" }}
-                   }{% if not forloop.last %},{% endif %}
-               {% endfor %}
-           ]'></div>
+         data-complaints="{{ complaints_json }}"></div>
    </aside>
 
    <article class="card p-5 space-y-4 bg-card rounded-xl">

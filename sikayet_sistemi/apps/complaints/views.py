@@ -22,6 +22,11 @@ def home(request):
     # En sık şikayet kategorileri
     categories = Complaint.objects.values('category').annotate(count=Count('category')).order_by('-count')[:5]
 
+    all_complaints = Complaint.objects.filter(
+        latitude__isnull=False,
+        longitude__isnull=False
+    ).values('id', 'title', 'description', 'district', 'category', 'priority', 'latitude', 'longitude')
+
     context = {
         'total_complaints': total_complaints,
         'new_complaints': new_complaints,
@@ -29,6 +34,7 @@ def home(request):
         'urgent_complaints': urgent_complaints,
         'recent_complaints': recent_complaints,
         'categories': categories,
+        'complaints_json': json.dumps(list(all_complaints), cls=DjangoJSONEncoder),
     }
     return render(request, 'complaints/home.html', context)
 

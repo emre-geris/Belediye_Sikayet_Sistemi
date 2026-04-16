@@ -52,7 +52,7 @@ function initializeComplaintMap(complaints) {
                         <div style="margin-bottom: 10px; font-size: 12px; color: #5e6b5a; line-height: 1.4;">
                             ${escapeHtml(complaint.description.substring(0, 100))}${complaint.description.length > 100 ? "..." : ""}
                         </div>
-                        <a href="/sikayet/${complaint.id}/" style="
+                        <a href="/sikayetler/${complaint.id}/" style="
                             display: inline-block;
                             background-color: #40513b;
                             color: white;
