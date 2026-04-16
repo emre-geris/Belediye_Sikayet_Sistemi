@@ -46,6 +46,16 @@ class Complaint(models.Model):
     address = models.TextField(
         verbose_name="Adres"
     )
+    latitude = models.FloatField(
+        null=True,
+        blank=True,
+        verbose_name="Enlem"
+    )
+    longitude = models.FloatField(
+        null=True,
+        blank=True,
+        verbose_name="Boylam"
+    )
     priority = models.CharField(
         max_length=20,
         choices=PRIORITY_CHOICES,
