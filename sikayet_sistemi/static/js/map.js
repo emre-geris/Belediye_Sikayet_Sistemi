@@ -25,8 +25,13 @@ function initializeComplaintMap(complaints) {
    // Add markers for each complaint with coordinates
    complaints.forEach((complaint) => {
       if (complaint.latitude && complaint.longitude) {
-         const marker = L.marker([complaint.latitude, complaint.longitude], {
-            title: complaint.title,
+         const marker = L.circleMarker([complaint.latitude, complaint.longitude], {
+            radius: 8,
+            fillColor: getPriorityColor(complaint.priority),
+            color: '#fff',
+            weight: 2,
+            opacity: 1,
+            fillOpacity: 0.85,
          }).addTo(map);
 
          // Create popup content
@@ -65,10 +70,9 @@ function initializeComplaintMap(complaints) {
    });
 
    // Fit map to bounds if we have multiple markers
-   if (complaints && complaints.length > 0) {
-      const markers = document.querySelectorAll(".leaflet-marker-icon");
-      if (markers.length > 1) {
-         const group = new L.featureGroup(map._layers);
+   if (complaints && complaints.length > 1) {
+      const group = new L.featureGroup(Object.values(map._layers));
+      if (group.getBounds().isValid()) {
          map.fitBounds(group.getBounds().pad(0.1));
       }
    }
@@ -119,8 +123,7 @@ function getPriorityColor(priority) {
 // Initialize map when DOM is ready
 document.addEventListener("DOMContentLoaded", function () {
    const mapContainer = document.getElementById("complaint-map");
-   if (mapContainer) {
-      // Read complaints data from data attribute
+   if (mapContainer && !mapContainer._leaflet_id) {
       const complaintsDataStr = mapContainer.getAttribute("data-complaints");
       let complaints = [];
 
