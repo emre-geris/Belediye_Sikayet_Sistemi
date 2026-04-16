@@ -6,6 +6,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q, Count
 from .models import Complaint
 from .forms import ComplaintForm
+import json
+from django.core.serializers.json import DjangoJSONEncoder
 
 def home(request):
     """Ana sayfa - İstatistikleri göster"""
@@ -62,13 +64,20 @@ class ComplaintListView(ListView):
             queryset = queryset.filter(category=category)
 
         return queryset
-    # Arama ve filtreleme seçeneklerini şablona göndermek için context'e ekleyelim
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['search_query'] = self.request.GET.get('search', '')
         context['selected_status'] = self.request.GET.get('status', '')
         context['selected_priority'] = self.request.GET.get('priority', '')
         context['selected_category'] = self.request.GET.get('category', '')
+
+        all_complaints = Complaint.objects.filter(
+            latitude__isnull=False,
+            longitude__isnull=False
+        ).values('id', 'title', 'description', 'district', 'category', 'priority', 'latitude', 'longitude')
+
+        context['complaints_json'] = json.dumps(list(all_complaints), cls=DjangoJSONEncoder)
         return context
 
 class ComplaintDetailView(DetailView):
