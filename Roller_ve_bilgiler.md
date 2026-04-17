@@ -21,4 +21,4 @@
 # http://127.0.0.1:8000/ ip sini kopylayain ve tarayicida acin.
 
 # Not eger migrate hatasi alinirsa
-# python manage.py migrate calistirin
+# python manage.py migrate calistirinnpm
