@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.decorators.http import require_http_methods
 from .models import CustomUser
+from apps.complaints.models import Complaint
 from .forms import (
     UserRegistrationForm, 
     UserLoginForm, 
@@ -87,6 +88,7 @@ def admin_login(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
+            request.session.pop('admin_welcomed', None)
             messages.success(request, f'Yönetici paneline hoş geldiniz, {user.first_name}!')
             next_page = request.GET.get('next', 'admin_dashboard')
             return redirect(next_page)
@@ -106,10 +108,16 @@ def admin_dashboard(request):
         messages.error(request, 'Bu sayfaya erişim izniniz yok.')
         return redirect('admin_login')
     
+    show_welcome = not request.session.get('admin_welcomed')
+    if show_welcome:
+        request.session['admin_welcomed'] = True
+
     context = {
         'page_title': 'Yönetici Paneli',
         'total_users': CustomUser.objects.filter(user_type='user').count(),
         'total_admins': CustomUser.objects.filter(user_type='admin').count(),
+        'total_complaints': Complaint.objects.count(),
+        'show_welcome': show_welcome,
     }
     return render(request, 'users/admin_dashboard.html', context)
 
