@@ -25,10 +25,6 @@ def user_register(request):
             user = form.save()
             messages.success(request, 'Kayıt başarılı! Lütfen giriş yapın.')
             return redirect('user_login')
-        else:
-            for field, errors in form.errors.items():
-                for error in errors:
-                    messages.error(request, f"{field}: {error}")
     else:
         form = UserRegistrationForm()
     
@@ -88,8 +84,7 @@ def admin_login(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            request.session.pop('admin_welcomed', None)
-            messages.success(request, f'Yönetici paneline hoş geldiniz, {user.first_name}!')
+            messages.success(request, f'Hoş geldiniz, {user.first_name}!')
             next_page = request.GET.get('next', 'admin_dashboard')
             return redirect(next_page)
     else:
@@ -107,17 +102,19 @@ def admin_dashboard(request):
     if not request.user.is_authenticated or not request.user.is_admin_user():
         messages.error(request, 'Bu sayfaya erişim izniniz yok.')
         return redirect('admin_login')
-    
-    show_welcome = not request.session.get('admin_welcomed')
-    if show_welcome:
-        request.session['admin_welcomed'] = True
 
     context = {
         'page_title': 'Yönetici Paneli',
         'total_users': CustomUser.objects.filter(user_type='user').count(),
-        'total_admins': CustomUser.objects.filter(user_type='admin').count(),
+        'total_workers': CustomUser.objects.filter(user_type='admin').count(),
         'total_complaints': Complaint.objects.count(),
-        'show_welcome': show_welcome,
+        'new_complaints': Complaint.objects.filter(status='new').count(),
+        'in_progress_complaints': Complaint.objects.filter(status='in_progress').count(),
+        'resolved_complaints': Complaint.objects.filter(status='resolved').count(),
+        'rejected_complaints': Complaint.objects.filter(status='rejected').count(),
+        'recent_complaints': Complaint.objects.order_by('-created_at')[:15],
+        'status_choices': Complaint.STATUS_CHOICES,
+        'priority_choices': Complaint.PRIORITY_CHOICES,
     }
     return render(request, 'users/admin_dashboard.html', context)
 

@@ -4,6 +4,8 @@ from django.views.generic import ListView, DetailView, CreateView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q, Count
+from django.contrib import messages
+from django.views.decorators.http import require_http_methods
 from .models import Complaint
 from .forms import ComplaintForm
 import json
@@ -125,4 +127,37 @@ class ComplaintCreateView(CreateView):
         print("\n!!! HATA: Form geçersiz! Detaylar: !!!")
         print(form.errors)
         return super().form_invalid(form)
+
+
+@require_http_methods(["POST"])
+def complaint_update_status(request, pk):
+    if not request.user.is_authenticated or not request.user.is_admin_user():
+        messages.error(request, 'Bu işlem için yetkiniz yok.')
+        return redirect('admin_login')
+
+    complaint = get_object_or_404(Complaint, pk=pk)
+    new_status = request.POST.get('status')
+    new_priority = request.POST.get('priority')
+    updates = []
+
+    valid_statuses = [choice[0] for choice in Complaint.STATUS_CHOICES]
+    if new_status and new_status in valid_statuses:
+        complaint.status = new_status
+        updates.append(f'durum: {complaint.get_status_display()}')
+
+    valid_priorities = [choice[0] for choice in Complaint.PRIORITY_CHOICES]
+    if new_priority and new_priority in valid_priorities:
+        complaint.priority = new_priority
+        updates.append(f'öncelik: {complaint.get_priority_display()}')
+
+    if updates:
+        complaint.save()
+        messages.success(request, f'Şikayet #{pk} güncellendi ({", ".join(updates)}).')
+    else:
+        messages.error(request, 'Geçersiz değer.')
+
+    next_url = request.POST.get('next', '')
+    if next_url:
+        return redirect(next_url)
+    return redirect('complaint_detail', pk=pk)
     

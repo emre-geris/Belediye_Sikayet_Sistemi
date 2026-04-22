@@ -5,7 +5,7 @@ Sikayet Sistemi{% endblock %} {% block content %}
       <!-- Header Section -->
       <div class="mb-8">
          <h1 class="text-4xl font-bold text-[var(--color-primary)] mb-3">
-            ➕ Yeni Şikayet Oluştur
+             Yeni Şikayet Oluştur
          </h1>
          <p class="text-lg text-[var(--muted)] leading-relaxed">
             Sorunu ne kadar net yazarsan, çözüm süreci o kadar hızlı ilerler.
@@ -24,13 +24,13 @@ Sikayet Sistemi{% endblock %} {% block content %}
             <label
                for="{{ form.title.id_for_label }}"
                class="block text-sm font-bold text-[var(--color-primary)] mb-2">
-               📝 Şikayet Başlığı
+                Şikayet Başlığı
                <span class="text-red-600">*</span>
             </label>
             {{ form.title }} {% for error in form.title.errors %}
             <div
                class="mt-2 text-sm text-red-600 font-medium flex items-center gap-1">
-               <span>⚠️</span> {{ error }}
+               <span></span> {{ error }}
             </div>
             {% endfor %}
             <p class="mt-2 text-xs text-[var(--muted)]">
@@ -43,13 +43,13 @@ Sikayet Sistemi{% endblock %} {% block content %}
             <label
                for="{{ form.description.id_for_label }}"
                class="block text-sm font-bold text-[var(--color-primary)] mb-2">
-               📋 Detaylı Açıklama
+                Detaylı Açıklama
                <span class="text-red-600">*</span>
             </label>
             {{ form.description }} {% for error in form.description.errors %}
             <div
                class="mt-2 text-sm text-red-600 font-medium flex items-center gap-1">
-               <span>⚠️</span> {{ error }}
+               <span></span> {{ error }}
             </div>
             {% endfor %}
             <p class="mt-2 text-xs text-[var(--muted)]">
@@ -62,13 +62,13 @@ Sikayet Sistemi{% endblock %} {% block content %}
             <label
                for="{{ form.category.id_for_label }}"
                class="block text-sm font-bold text-[var(--color-primary)] mb-2">
-               🏷️ Kategori
+                Kategori
                <span class="text-red-600">*</span>
             </label>
             {{ form.category }} {% for error in form.category.errors %}
             <div
                class="mt-2 text-sm text-red-600 font-medium flex items-center gap-1">
-               <span>⚠️</span> {{ error }}
+               <span></span> {{ error }}
             </div>
             {% endfor %}
          </div>
@@ -78,7 +78,7 @@ Sikayet Sistemi{% endblock %} {% block content %}
             class="bg-gradient-to-br from-[var(--color-light)] to-[rgba(230,217,182,0.2)] p-6 rounded-xl border-2 border-dashed border-[var(--color-light)] mb-6">
             <h3
                class="text-lg font-bold text-[var(--color-primary)] mb-4 flex items-center gap-2">
-               📍 Konum Bilgisi
+                Konum Bilgisi
             </h3>
 
             <!-- City and District -->
@@ -94,7 +94,7 @@ Sikayet Sistemi{% endblock %} {% block content %}
                   {{ form.city }} {% for error in form.city.errors %}
                   <div
                      class="mt-2 text-sm text-red-600 font-medium flex items-center gap-1">
-                     <span>⚠️</span> {{ error }}
+                     <span></span> {{ error }}
                   </div>
                   {% endfor %}
                </div>
@@ -110,7 +110,7 @@ Sikayet Sistemi{% endblock %} {% block content %}
                   {{ form.district }} {% for error in form.district.errors %}
                   <div
                      class="mt-2 text-sm text-red-600 font-medium flex items-center gap-1">
-                     <span>⚠️</span> {{ error }}
+                     <span></span> {{ error }}
                   </div>
                   {% endfor %}
                </div>
@@ -127,7 +127,7 @@ Sikayet Sistemi{% endblock %} {% block content %}
                {{ form.address }} {% for error in form.address.errors %}
                <div
                   class="mt-2 text-sm text-red-600 font-medium flex items-center gap-1">
-                  <span>⚠️</span> {{ error }}
+                  <span></span> {{ error }}
                </div>
                {% endfor %}
                <p class="mt-2 text-xs text-[var(--muted)]">
@@ -144,24 +144,24 @@ Sikayet Sistemi{% endblock %} {% block content %}
             <button
                type="submit"
                class="flex-1 bg-[var(--color-primary)] text-white font-bold py-3 px-6 rounded-lg hover:opacity-90 transition duration-200 shadow-md flex items-center justify-center gap-2">
-               💾 Şikayeti Kaydet
+                Şikayeti Kaydet
             </button>
             <a
                href="{% url 'complaint_list' %}"
                class="flex-1 bg-gray-200 text-[var(--color-primary)] font-bold py-3 px-6 rounded-lg hover:bg-gray-300 transition duration-200 text-center flex items-center justify-center gap-2">
-               ❌ Vazgeç
+                Vazgeç
             </a>
          </div>
       </form>
 
       <!-- Information Box -->
       <div class="mt-8 bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
-         <h4 class="font-bold text-blue-900 mb-2">💡 İpuçları</h4>
+         <h4 class="font-bold text-blue-900 mb-2"> İpuçları</h4>
          <ul class="text-sm text-blue-800 space-y-1">
-            <li>✓ Başlıkta önemli ayrıntıları vurgulayın</li>
-            <li>✓ Açıklamada tam adres, zaman ve neler oldu bölün</li>
-            <li>✓ Fotoğraf veya kanıt varsa ekleyin</li>
-            <li>✓ İrtibat bilgileriniz doğru olması önemlidir</li>
+            <li> Başlıkta önemli ayrıntıları vurgulayın</li>
+            <li> Açıklamada tam adres, zaman ve neler oldu bölün</li>
+            <li> Fotoğraf veya kanıt varsa ekleyin</li>
+            <li> İrtibat bilgileriniz doğru olması önemlidir</li>
          </ul>
       </div>
    </div>

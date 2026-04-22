@@ -71,9 +71,12 @@ class UserRegistrationForm(UserCreationForm):
 
 # ================= LOGIN =================
 
+INPUT_CSS = 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] bg-[var(--card)] text-[var(--text)]'
+
+
 class UserLoginForm(forms.Form):
-    tc_id = forms.CharField(max_length=11)
-    password = forms.CharField(widget=forms.PasswordInput)
+    tc_id = forms.CharField(max_length=11, widget=forms.TextInput(attrs={'class': INPUT_CSS, 'placeholder': 'TC Kimlik Numaranız'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': INPUT_CSS, 'placeholder': 'Şifreniz'}))
 
     def clean(self):
         cleaned_data = super().clean()
@@ -98,8 +101,8 @@ class UserLoginForm(forms.Form):
 
 
 class AdminLoginForm(forms.Form):
-    tc_id = forms.CharField(max_length=11)
-    password = forms.CharField(widget=forms.PasswordInput)
+    tc_id = forms.CharField(max_length=11, widget=forms.TextInput(attrs={'class': INPUT_CSS, 'placeholder': 'TC Kimlik Numaranız'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': INPUT_CSS, 'placeholder': 'Şifreniz'}))
 
     def clean(self):
         cleaned_data = super().clean()
@@ -108,12 +111,12 @@ class AdminLoginForm(forms.Form):
 
         if tc_id and password:
             try:
-                user = CustomUser.objects.get(tc_id=tc_id, user_type="admin")
+                user = CustomUser.objects.get(tc_id=tc_id, user_type__in=['admin', 'system_admin'])
             except CustomUser.DoesNotExist:
-                raise forms.ValidationError("Admin bilgileri hatalı.")
+                raise forms.ValidationError("Çalışan bilgileri hatalı.")
 
             if not user.check_password(password):
-                raise forms.ValidationError("Admin bilgileri hatalı.")
+                raise forms.ValidationError("Çalışan bilgileri hatalı.")
 
             self.user_cache = user
 

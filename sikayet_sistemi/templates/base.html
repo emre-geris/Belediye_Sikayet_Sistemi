@@ -48,7 +48,7 @@
             <a
                href="{% url 'home' %}"
                class="flex items-center gap-2 text-white font-bold text-xl md:text-2xl hover:opacity-80 transition duration-200">
-               <span class="text-3xl">📋</span>
+               <span class="text-3xl"></span>
                <span class="hidden sm:inline">Şikayet Sistemi</span>
                <span class="sm:hidden">Şikayetler</span>
             </a>
@@ -60,21 +60,21 @@
                      <a
                         href="{% url 'home' %}"
                         class="text-white px-4 py-2 rounded-lg hover:bg-[var(--color-secondary)] transition duration-200 font-medium">
-                        🏠 Ana Sayfa
+                         Ana Sayfa
                      </a>
                   </li>
                   <li>
                      <a
                         href="{% url 'complaint_list' %}"
                         class="text-white px-4 py-2 rounded-lg hover:bg-[var(--color-secondary)] transition duration-200 font-medium">
-                        📝 Şikayetler
+                         Şikayetler
                      </a>
                   </li>
                   <li>
                      <a
                         href="{% url 'complaint_create' %}"
                         class="text-white px-4 py-2 rounded-lg hover:bg-[var(--color-secondary)] transition duration-200 font-medium">
-                        ➕ Yeni Şikayet
+                         Yeni Şikayet
                      </a>
                   </li>
                   {% if user.is_authenticated %} {% if user.is_admin_user %}
@@ -82,7 +82,7 @@
                      <a
                         href="{% url 'admin_dashboard' %}"
                         class="text-white px-4 py-2 rounded-lg hover:bg-[var(--color-secondary)] transition duration-200 font-medium">
-                        🔐 Yönetici Paneli
+                         Yönetici Paneli
                      </a>
                   </li>
                   {% endif %}
@@ -90,14 +90,14 @@
                      <a
                         href="{% url 'user_profile' %}"
                         class="text-white px-4 py-2 rounded-lg hover:bg-[var(--color-secondary)] transition duration-200 font-medium">
-                        👤 {{ user.first_name|default:user.username }}
+                         {{ user.first_name|default:user.username }}
                      </a>
                   </li>
                   <li>
                      <a
                         href="{% url 'user_logout' %}"
                         class="text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-200 font-medium">
-                        🚪 Çıkış
+                         Çıkış
                      </a>
                   </li>
                   {% else %}
@@ -105,14 +105,14 @@
                      <a
                         href="{% url 'user_login' %}"
                         class="text-white px-4 py-2 rounded-lg hover:bg-[var(--color-secondary)] transition duration-200 font-medium">
-                        🔓 Giriş
+                         Giriş
                      </a>
                   </li>
                   <li>
                      <a
                         href="{% url 'user_register' %}"
                         class="text-white px-4 py-2 rounded-lg hover:bg-[var(--color-secondary)] transition duration-200 font-medium">
-                        ✍️ Kayıt
+                         Kayıt
                      </a>
                   </li>
                   {% endif %}
@@ -140,6 +140,19 @@
 
       <!-- Main Content -->
       <main class="flex-1 w-full max-w-7xl mx-auto px-4 lg:px-0 py-8 pt-24">
+         {% if messages %}
+         <div class="mb-4 space-y-2">
+            {% for message in messages %}
+            <div class="p-4 rounded-lg border font-medium
+               {% if message.tags == 'success' %}bg-green-50 border-green-300 text-green-800
+               {% elif message.tags == 'error' %}bg-red-50 border-red-300 text-red-800
+               {% elif message.tags == 'warning' %}bg-yellow-50 border-yellow-300 text-yellow-800
+               {% else %}bg-blue-50 border-blue-300 text-blue-800{% endif %}">
+               {{ message }}
+            </div>
+            {% endfor %}
+         </div>
+         {% endif %}
          {% block content %}{% endblock %}
       </main>
 
@@ -151,7 +164,7 @@
                <!-- About Section -->
                <div>
                   <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
-                     <span class="text-2xl">📋</span> Şikayet Sistemi
+                     <span class="text-2xl"></span> Şikayet Sistemi
                   </h3>
                   <p class="text-gray-200 text-sm leading-relaxed">
                      Yerel sorunları bildirin ve topluluk tarafından desteklenen
@@ -199,7 +212,7 @@
                   <h4 class="text-lg font-bold mb-4">İletişim</h4>
                   <ul class="space-y-2 text-sm text-gray-200">
                      <li>
-                        📧
+                        
                         <a
                            href="mailto:info@sikayetsistemi.com"
                            class="hover:text-white transition"
@@ -207,14 +220,14 @@
                         >
                      </li>
                      <li>
-                        📞
+                        
                         <a
                            href="tel:+905551234567"
                            class="hover:text-white transition"
                            >+90 555 123 4567</a
                         >
                      </li>
-                     <li>🕐 Pazartesi - Cuma: 09:00 - 17:00</li>
+                     <li> Pazartesi - Cuma: 09:00 - 17:00</li>
                   </ul>
                </div>
             </div>

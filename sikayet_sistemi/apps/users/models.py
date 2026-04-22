@@ -9,11 +9,12 @@ class CustomUser(AbstractUser):
     
     USER_TYPE_CHOICES = (
         ('user', 'Kullanıcı'),
-        ('admin', 'Yönetici'),
+        ('admin', 'Belediye Çalışanı'),
+        ('system_admin', 'Sistem Yöneticisi'),
     )
-    
+
     user_type = models.CharField(
-        max_length=10,
+        max_length=12,
         choices=USER_TYPE_CHOICES,
         default='user',
         verbose_name='Kullanıcı Türü'
@@ -45,4 +46,7 @@ class CustomUser(AbstractUser):
         return f"{self.get_full_name()}"
     
     def is_admin_user(self):
-        return self.user_type == 'admin'
+        return self.user_type in ('admin', 'system_admin')
+
+    def is_system_admin(self):
+        return self.user_type == 'system_admin'
