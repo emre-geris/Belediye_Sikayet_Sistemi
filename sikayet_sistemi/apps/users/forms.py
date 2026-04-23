@@ -2,14 +2,34 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import CustomUser
 
+INPUT_CSS = 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] bg-[var(--card)] text-[var(--text)]'
+TEXTAREA_CSS = INPUT_CSS + ' resize-none'
+
 
 class UserRegistrationForm(UserCreationForm):
-    email = forms.EmailField()
-    first_name = forms.CharField(max_length=150)
-    last_name = forms.CharField(max_length=150)
-    tc_id = forms.CharField(max_length=11)
-    phone = forms.CharField(max_length=15)
-    address = forms.CharField(max_length=500)
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={'class': INPUT_CSS, 'placeholder': 'E-posta adresiniz'})
+    )
+    first_name = forms.CharField(
+        max_length=150,
+        widget=forms.TextInput(attrs={'class': INPUT_CSS, 'placeholder': 'Adınız'})
+    )
+    last_name = forms.CharField(
+        max_length=150,
+        widget=forms.TextInput(attrs={'class': INPUT_CSS, 'placeholder': 'Soyadınız'})
+    )
+    tc_id = forms.CharField(
+        max_length=11,
+        widget=forms.TextInput(attrs={'class': INPUT_CSS, 'placeholder': '11 haneli TC Kimlik No'})
+    )
+    phone = forms.CharField(
+        max_length=15,
+        widget=forms.TextInput(attrs={'class': INPUT_CSS, 'placeholder': 'Telefon numaranız'})
+    )
+    address = forms.CharField(
+        max_length=500,
+        widget=forms.Textarea(attrs={'class': TEXTAREA_CSS, 'placeholder': 'Adresiniz', 'rows': 3})
+    )
 
     class Meta:
         model = CustomUser
@@ -23,6 +43,11 @@ class UserRegistrationForm(UserCreationForm):
             'password1',
             'password2',
         )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['password1'].widget.attrs.update({'class': INPUT_CSS, 'placeholder': 'Şifreniz'})
+        self.fields['password2'].widget.attrs.update({'class': INPUT_CSS, 'placeholder': 'Şifrenizi tekrar giriniz'})
 
     def clean_tc_id(self):
         tc_id = self.cleaned_data.get('tc_id')
@@ -70,8 +95,6 @@ class UserRegistrationForm(UserCreationForm):
 
 
 # ================= LOGIN =================
-
-INPUT_CSS = 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] bg-[var(--card)] text-[var(--text)]'
 
 
 class UserLoginForm(forms.Form):

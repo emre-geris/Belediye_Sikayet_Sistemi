@@ -6,4 +6,5 @@ urlpatterns = [
     path('olustur/', views.ComplaintCreateView.as_view(), name='complaint_create'),
     path('<int:pk>/', views.ComplaintDetailView.as_view(), name='complaint_detail'),
     path('<int:pk>/durum/', views.complaint_update_status, name='complaint_update_status'),
+    path('<int:pk>/duzenle/', views.complaint_admin_update, name='complaint_admin_update'),
 ]

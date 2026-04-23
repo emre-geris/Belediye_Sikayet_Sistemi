@@ -16,6 +16,15 @@ class Complaint(models.Model):
         ('rejected', 'Reddedildi'),
     ]
 
+    CATEGORY_CHOICES = [
+        ('infrastructure', 'Altyapı'),
+        ('traffic', 'Trafik'),
+        ('pothole', 'Çukur'),
+        ('water', 'Su Kaçağı'),
+        ('trash', 'Çöp'),
+        ('other', 'Diğer'),
+    ]
+
     title = models.CharField(
         max_length=255,
         verbose_name="Şikayet Başlığı"
@@ -25,14 +34,7 @@ class Complaint(models.Model):
     )
     category = models.CharField(
         max_length=100,
-        choices=[
-            ('infrastructure', 'Altyapı'),
-            ('traffic', 'Trafik'),
-            ('pothole', 'Çukur'),
-            ('water', 'Su Kaçağı'),
-            ('trash', 'Çöp'),
-            ('other', 'Diğer'),
-        ],
+        choices=CATEGORY_CHOICES,
         verbose_name="Kategori"
     )
     city = models.CharField(
