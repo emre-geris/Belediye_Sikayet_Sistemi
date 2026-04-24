@@ -6,7 +6,7 @@ Sistemi{% endblock %} {% block content %}
       <!-- Header -->
       <div class="mb-8">
          <h1 class="text-4xl font-bold text-[var(--text)] mb-2">
-            👤 Profil Sayfası
+             Profil Sayfası
          </h1>
          <p class="text-gray-600">
             Kişisel bilgilerinizi görüntüleyin ve yönetin
@@ -21,9 +21,7 @@ Sistemi{% endblock %} {% block content %}
                class="bg-[var(--card)] rounded-2xl shadow-lg border border-[var(--color-light)] p-8">
                <!-- Profile Header -->
                <div
-                  class="flex items-center gap-6 pb-8 border-b border-[var(--color-light)]">
-                  <div class="text-6xl">👤</div>
-                  <div>
+                  class="flex items-center gap-6 pb-8 border-b border-[var(--color-light)]">                  <div>
                      <h2 class="text-3xl font-bold text-[var(--text)]">
                         {{ user.first_name }} {{ user.last_name }}
                      </h2>
@@ -42,7 +40,7 @@ Sistemi{% endblock %} {% block content %}
                   <div>
                      <label
                         class="block text-sm font-semibold text-gray-700 mb-2"
-                        >📧 Email Adresi</label
+                        > Email Adresi</label
                      >
                      <div
                         class="p-4 bg-gray-50 rounded-lg border border-gray-200">
@@ -56,7 +54,7 @@ Sistemi{% endblock %} {% block content %}
                   <div>
                      <label
                         class="block text-sm font-semibold text-gray-700 mb-2"
-                        >👤 Kullanıcı Adı</label
+                        > Kullanıcı Adı</label
                      >
                      <div
                         class="p-4 bg-gray-50 rounded-lg border border-gray-200">
@@ -71,7 +69,7 @@ Sistemi{% endblock %} {% block content %}
                   <div>
                      <label
                         class="block text-sm font-semibold text-gray-700 mb-2"
-                        >📞 Telefon Numarası</label
+                        > Telefon Numarası</label
                      >
                      <div
                         class="p-4 bg-gray-50 rounded-lg border border-gray-200">
@@ -86,7 +84,7 @@ Sistemi{% endblock %} {% block content %}
                   <div>
                      <label
                         class="block text-sm font-semibold text-gray-700 mb-2"
-                        >🆔 TC Kimlik Numarası</label
+                        > TC Kimlik Numarası</label
                      >
                      <div
                         class="p-4 bg-gray-50 rounded-lg border border-gray-200">
@@ -100,7 +98,7 @@ Sistemi{% endblock %} {% block content %}
                   <div>
                      <label
                         class="block text-sm font-semibold text-gray-700 mb-2"
-                        >📍 Adres</label
+                        > Adres</label
                      >
                      <div
                         class="p-4 bg-gray-50 rounded-lg border border-gray-200">
@@ -116,7 +114,7 @@ Sistemi{% endblock %} {% block content %}
                   <div>
                      <label
                         class="block text-sm font-semibold text-gray-700 mb-2"
-                        >🏢 Şirket/Kuruluş</label
+                        > Şirket/Kuruluş</label
                      >
                      <div
                         class="p-4 bg-gray-50 rounded-lg border border-gray-200">
@@ -131,7 +129,7 @@ Sistemi{% endblock %} {% block content %}
                   <div>
                      <label
                         class="block text-sm font-semibold text-gray-700 mb-2"
-                        >📅 Kayıt Tarihi</label
+                        > Kayıt Tarihi</label
                      >
                      <div
                         class="p-4 bg-gray-50 rounded-lg border border-gray-200">
@@ -164,13 +162,13 @@ Sistemi{% endblock %} {% block content %}
             <div
                class="bg-[var(--card)] rounded-2xl shadow-lg border border-[var(--color-light)] p-6">
                <h3 class="text-lg font-bold text-[var(--text)] mb-4">
-                  📊 Hesap Durumu
+                   Hesap Durumu
                </h3>
                <div class="space-y-3">
                   <div
                      class="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
                      <span class="text-gray-700">Aktif Durum</span>
-                     <span class="text-green-600 font-bold">✓ Aktif</span>
+                     <span class="text-green-600 font-bold"> Aktif</span>
                   </div>
                   <div
                      class="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200">
@@ -181,7 +179,7 @@ Sistemi{% endblock %} {% block content %}
                      class="flex items-center justify-between p-3 bg-purple-50 rounded-lg border border-purple-200">
                      <span class="text-gray-700">Doğrulama</span>
                      <span class="text-purple-600 font-bold"
-                        >✓ Doğrulanmış</span
+                        > Doğrulanmış</span
                      >
                   </div>
                </div>
@@ -191,7 +189,7 @@ Sistemi{% endblock %} {% block content %}
             <div
                class="bg-[var(--card)] rounded-2xl shadow-lg border border-[var(--color-light)] p-6">
                <h3 class="text-lg font-bold text-[var(--text)] mb-4">
-                  ❓ Yardım
+                   Yardım
                </h3>
                <div class="space-y-2">
                   <a
@@ -216,7 +214,7 @@ Sistemi{% endblock %} {% block content %}
             <a
                href="{% url 'user_logout' %}"
                class="w-full bg-red-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-red-700 transition duration-300 text-center block">
-               🚪 Çıkış Yap
+                Çıkış Yap
             </a>
          </div>
       </div>

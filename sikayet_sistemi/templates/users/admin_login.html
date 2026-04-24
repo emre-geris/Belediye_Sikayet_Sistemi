@@ -8,25 +8,12 @@
          class="bg-white rounded-2xl shadow-2xl overflow-hidden border-t-4 border-red-600">
          <!-- Header -->
          <div
-            class="bg-gradient-to-r from-red-600 to-orange-600 px-8 py-8 text-center">
-            <div class="text-5xl mb-4">🔐</div>
-            <h1 class="text-3xl font-bold text-white mb-2">Yönetici Giriş</h1>
+            class="bg-gradient-to-r from-red-600 to-orange-600 px-8 py-8 text-center">            <h1 class="text-3xl font-bold text-white mb-2">Yönetici Giriş</h1>
             <p class="text-red-100">Yönetim Paneline Hoş Geldiniz</p>
          </div>
 
          <!-- Form -->
          <div class="px-8 py-8">
-            {% if messages %}
-            <div class="mb-6 space-y-3">
-               {% for message in messages %}
-               <div
-                  class="p-4 rounded-lg bg-{% if message.tags %}{{ message.tags }}-50{% else %}red-50{% endif %} border border-{% if message.tags %}{{ message.tags }}-200{% else %}red-200{% endif %} text-{% if message.tags %}{{ message.tags }}-800{% else %}red-800{% endif %}">
-                  {{ message }}
-               </div>
-               {% endfor %}
-            </div>
-            {% endif %}
-
             <form method="post" class="space-y-6" novalidate>
                {% csrf_token %}
 
@@ -112,7 +99,7 @@
       <div
          class="mt-8 p-4 bg-red-50 border border-red-200 rounded-lg text-center">
          <p class="text-sm text-red-800">
-            ⚠️ Bu alan sadece yöneticiler için ayrılmıştır
+             Bu alan sadece yöneticiler için ayrılmıştır
          </p>
       </div>
    </div>

@@ -4,8 +4,11 @@ from django.views.generic import ListView, DetailView, CreateView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q, Count
+from django.contrib import messages
+from django.views.decorators.http import require_http_methods
 from .models import Complaint
 from .forms import ComplaintForm
+from apps.users.utils import create_status_notification
 import json
 from django.core.serializers.json import DjangoJSONEncoder
 
@@ -92,6 +95,14 @@ class ComplaintDetailView(DetailView):
     template_name = 'complaints/complaint_detail.html'
     context_object_name = 'complaint'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.user.is_authenticated and self.request.user.is_admin_user():
+            context['status_choices'] = Complaint.STATUS_CHOICES
+            context['priority_choices'] = Complaint.PRIORITY_CHOICES
+            context['category_choices'] = Complaint.CATEGORY_CHOICES
+        return context
+
 class ComplaintCreateView(CreateView):
     """Yeni şikayet oluştur"""
     model = Complaint
@@ -125,4 +136,75 @@ class ComplaintCreateView(CreateView):
         print("\n!!! HATA: Form geçersiz! Detaylar: !!!")
         print(form.errors)
         return super().form_invalid(form)
+
+
+@require_http_methods(["POST"])
+def complaint_admin_update(request, pk):
+    if not request.user.is_authenticated or not request.user.is_admin_user():
+        messages.error(request, 'Bu işlem için yetkiniz yok.')
+        return redirect('admin_login')
+
+    complaint = get_object_or_404(Complaint, pk=pk)
+
+    title = request.POST.get('title', '').strip()
+    description = request.POST.get('description', '').strip()
+    status = request.POST.get('status', '')
+    priority = request.POST.get('priority', '')
+    category = request.POST.get('category', '')
+
+    valid_statuses = [c[0] for c in Complaint.STATUS_CHOICES]
+    valid_priorities = [c[0] for c in Complaint.PRIORITY_CHOICES]
+    valid_categories = [c[0] for c in Complaint.CATEGORY_CHOICES]
+    old_status_display = complaint.get_status_display()
+
+    if title:
+        complaint.title = title
+    if description:
+        complaint.description = description
+    if status in valid_statuses:
+        complaint.status = status
+    if priority in valid_priorities:
+        complaint.priority = priority
+    if category in valid_categories:
+        complaint.category = category
+
+    complaint.save()
+    create_status_notification(complaint, old_status_display, complaint.get_status_display())
+    messages.success(request, f'Şikayet #{pk} başarıyla güncellendi.')
+    return redirect('complaint_detail', pk=pk)
+
+
+@require_http_methods(["POST"])
+def complaint_update_status(request, pk):
+    if not request.user.is_authenticated or not request.user.is_admin_user():
+        messages.error(request, 'Bu işlem için yetkiniz yok.')
+        return redirect('admin_login')
+
+    complaint = get_object_or_404(Complaint, pk=pk)
+    new_status = request.POST.get('status')
+    new_priority = request.POST.get('priority')
+    updates = []
+    old_status_display = complaint.get_status_display()
+
+    valid_statuses = [choice[0] for choice in Complaint.STATUS_CHOICES]
+    if new_status and new_status in valid_statuses:
+        complaint.status = new_status
+        updates.append(f'durum: {complaint.get_status_display()}')
+
+    valid_priorities = [choice[0] for choice in Complaint.PRIORITY_CHOICES]
+    if new_priority and new_priority in valid_priorities:
+        complaint.priority = new_priority
+        updates.append(f'öncelik: {complaint.get_priority_display()}')
+
+    if updates:
+        complaint.save()
+        create_status_notification(complaint, old_status_display, complaint.get_status_display())
+        messages.success(request, f'Şikayet #{pk} güncellendi ({", ".join(updates)}).')
+    else:
+        messages.error(request, 'Geçersiz değer.')
+
+    next_url = request.POST.get('next', '')
+    if next_url:
+        return redirect(next_url)
+    return redirect('complaint_detail', pk=pk)
     

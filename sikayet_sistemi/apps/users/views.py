@@ -3,14 +3,14 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.decorators.http import require_http_methods
-from .models import CustomUser
+from django.db.models import Q
+from .models import CustomUser, Notification
 from apps.complaints.models import Complaint
 from .forms import (
-    UserRegistrationForm, 
-    UserLoginForm, 
+    UserRegistrationForm,
+    UserLoginForm,
     AdminLoginForm
 )
-
 # ============ User Views ============
 
 @require_http_methods(["GET", "POST"])
@@ -25,10 +25,6 @@ def user_register(request):
             user = form.save()
             messages.success(request, 'Kayıt başarılı! Lütfen giriş yapın.')
             return redirect('user_login')
-        else:
-            for field, errors in form.errors.items():
-                for error in errors:
-                    messages.error(request, f"{field}: {error}")
     else:
         form = UserRegistrationForm()
     
@@ -88,8 +84,7 @@ def admin_login(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            request.session.pop('admin_welcomed', None)
-            messages.success(request, f'Yönetici paneline hoş geldiniz, {user.first_name}!')
+            messages.success(request, f'Hoş geldiniz, {user.first_name}!')
             next_page = request.GET.get('next', 'admin_dashboard')
             return redirect(next_page)
     else:
@@ -107,19 +102,56 @@ def admin_dashboard(request):
     if not request.user.is_authenticated or not request.user.is_admin_user():
         messages.error(request, 'Bu sayfaya erişim izniniz yok.')
         return redirect('admin_login')
-    
-    show_welcome = not request.session.get('admin_welcomed')
-    if show_welcome:
-        request.session['admin_welcomed'] = True
+
+    complaints = Complaint.objects.order_by('-created_at')
+
+    search = request.GET.get('search', '')
+    status_filter = request.GET.get('status', '')
+    priority_filter = request.GET.get('priority', '')
+    category_filter = request.GET.get('category', '')
+
+    if search:
+        complaints = complaints.filter(
+            Q(title__icontains=search) |
+            Q(district__icontains=search) |
+            Q(description__icontains=search)
+        )
+    if status_filter:
+        complaints = complaints.filter(status=status_filter)
+    if priority_filter:
+        complaints = complaints.filter(priority=priority_filter)
+    if category_filter:
+        complaints = complaints.filter(category=category_filter)
 
     context = {
         'page_title': 'Yönetici Paneli',
         'total_users': CustomUser.objects.filter(user_type='user').count(),
-        'total_admins': CustomUser.objects.filter(user_type='admin').count(),
+        'total_workers': CustomUser.objects.filter(user_type='admin').count(),
         'total_complaints': Complaint.objects.count(),
-        'show_welcome': show_welcome,
+        'new_complaints': Complaint.objects.filter(status='new').count(),
+        'in_progress_complaints': Complaint.objects.filter(status='in_progress').count(),
+        'resolved_complaints': Complaint.objects.filter(status='resolved').count(),
+        'rejected_complaints': Complaint.objects.filter(status='rejected').count(),
+        'complaints': complaints[:100],
+        'status_choices': Complaint.STATUS_CHOICES,
+        'priority_choices': Complaint.PRIORITY_CHOICES,
+        'category_choices': Complaint.CATEGORY_CHOICES,
+        'search': search,
+        'status_filter': status_filter,
+        'priority_filter': priority_filter,
+        'category_filter': category_filter,
     }
     return render(request, 'users/admin_dashboard.html', context)
+
+
+@login_required(login_url='user_login')
+@require_http_methods(["POST"])
+def mark_notifications_read(request):
+    """Kullanıcının tüm bildirimlerini okundu işaretle."""
+    Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
+
+    next_url = request.POST.get('next') or request.META.get('HTTP_REFERER') or 'home'
+    return redirect(next_url)
 
 
 def user_logout(request):

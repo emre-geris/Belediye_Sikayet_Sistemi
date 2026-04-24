@@ -259,7 +259,7 @@
 
       <!-- Harita -->
       <div class="bg-[var(--card)] p-4 rounded-2xl shadow-md border border-gray-100 mb-8">
-         <h2 class="text-lg font-bold text-[var(--color-primary)] mb-4">🗺️ Şikayet Haritası</h2>
+         <h2 class="text-lg font-bold text-[var(--color-primary)] mb-4"> Şikayet Haritası</h2>
          <div id="complaint-map"
             data-complaints="{{ complaints_json }}"
             style="height: 450px; border-radius: 12px;">
@@ -284,7 +284,7 @@
                      </a>
                   </h3>
                   <time class="text-sm text-[var(--muted)] font-medium">
-                     📅 {{ complaint.created_at|date:"d.m.Y H:i" }}
+                      {{ complaint.created_at|date:"d.m.Y H:i" }}
                   </time>
                </div>
 
@@ -294,22 +294,22 @@
                   {% if complaint.priority == 'urgent' %}
                   <span
                      class="inline-flex items-center gap-1 bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-bold border border-red-200">
-                     🔴 Acil
+                      Acil
                   </span>
                   {% elif complaint.priority == 'high' %}
                   <span
                      class="inline-flex items-center gap-1 bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs font-bold border border-orange-200">
-                     🟠 Yüksek
+                      Yüksek
                   </span>
                   {% elif complaint.priority == 'low' %}
                   <span
                      class="inline-flex items-center gap-1 bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold border border-green-200">
-                     🟢 Düşük
+                      Düşük
                   </span>
                   {% else %}
                   <span
                      class="inline-flex items-center gap-1 bg-[var(--color-light)] text-[var(--color-primary)] px-3 py-1 rounded-full text-xs font-bold border border-yellow-300">
-                     🟡 Orta
+                      Orta
                   </span>
                   {% endif %}
 
@@ -317,22 +317,22 @@
                   {% if complaint.status == 'new' %}
                   <span
                      class="inline-flex items-center gap-1 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-bold border border-blue-200">
-                     ✨ Yeni
+                      Yeni
                   </span>
                   {% elif complaint.status == 'in_progress' %}
                   <span
                      class="inline-flex items-center gap-1 bg-cyan-100 text-cyan-800 px-3 py-1 rounded-full text-xs font-bold border border-cyan-200">
-                     ⏳ İnceleniyor
+                      İnceleniyor
                   </span>
                   {% elif complaint.status == 'resolved' %}
                   <span
                      class="inline-flex items-center gap-1 bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold border border-green-200">
-                     ✅ Çözüldü
+                      Çözüldü
                   </span>
                   {% else %}
                   <span
                      class="inline-flex items-center gap-1 bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-bold border border-red-200">
-                     ❌ Reddedildi
+                      Reddedildi
                   </span>
                   {% endif %}
                </div>
@@ -348,7 +348,7 @@
                <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
                   <span
                      class="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide"
-                     >📍 Konum</span
+                     > Konum</span
                   >
                   <p
                      class="text-sm font-medium text-[var(--color-primary)] mt-1">
@@ -358,7 +358,7 @@
                <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
                   <span
                      class="text-xs font-semibold text-[var(--muted)] uppercase tracking-wide"
-                     >🏷️ Kategori</span
+                     > Kategori</span
                   >
                   <p
                      class="text-sm font-medium text-[var(--color-primary)] mt-1">
@@ -378,7 +378,7 @@
          {% empty %}
          <div class="text-center py-12">
             <p class="text-[var(--muted)] text-lg">
-               😔 Filtreye uygun şikayet bulunamadı. Lütfen filtreleri kontrol
+                Filtreye uygun şikayet bulunamadı. Lütfen filtreleri kontrol
                ediniz.
             </p>
          </div>
@@ -392,12 +392,12 @@
          <a
             href="?page=1&search={{ search_query }}&status={{ selected_status }}&priority={{ selected_priority }}&category={{ selected_category }}"
             class="px-4 py-2 rounded-lg border border-gray-300 bg-white text-[var(--color-primary)] font-bold hover:bg-gray-100 transition duration-200">
-            ⏮️ İlk
+             İlk
          </a>
          <a
             href="?page={{ page_obj.previous_page_number }}&search={{ search_query }}&status={{ selected_status }}&priority={{ selected_priority }}&category={{ selected_category }}"
             class="px-4 py-2 rounded-lg border border-gray-300 bg-white text-[var(--color-primary)] font-bold hover:bg-gray-100 transition duration-200">
-            ◀️ Önceki
+             Önceki
          </a>
          {% endif %}
 
@@ -410,12 +410,12 @@
          <a
             href="?page={{ page_obj.next_page_number }}&search={{ search_query }}&status={{ selected_status }}&priority={{ selected_priority }}&category={{ selected_category }}"
             class="px-4 py-2 rounded-lg border border-gray-300 bg-white text-[var(--color-primary)] font-bold hover:bg-gray-100 transition duration-200">
-            Sonraki ▶️
+            Sonraki 
          </a>
          <a
             href="?page={{ page_obj.paginator.num_pages }}&search={{ search_query }}&status={{ selected_status }}&priority={{ selected_priority }}&category={{ selected_category }}"
             class="px-4 py-2 rounded-lg border border-gray-300 bg-white text-[var(--color-primary)] font-bold hover:bg-gray-100 transition duration-200">
-            Son ⏭️
+            Son 
          </a>
          {% endif %}
       </nav>

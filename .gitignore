@@ -7,7 +7,6 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
-
 .env
 *.log
 
@@ -38,6 +37,7 @@ npm-debug.log*
 # =========================
 .vscode/
 .idea/
+.claude/
 
 # =========================
 # OS

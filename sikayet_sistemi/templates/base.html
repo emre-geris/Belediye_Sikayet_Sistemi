@@ -32,11 +32,79 @@
                rgba(230, 217, 182, 0.3) 100%
             );
          }
+         .notification-shell {
+            position: relative;
+         }
+         .notification-trigger {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            color: white;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+         }
+         .notification-trigger:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-1px);
+         }
+         .notification-badge {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            min-width: 20px;
+            height: 20px;
+            padding: 0 6px;
+            border-radius: 999px;
+            background: #dc2626;
+            color: white;
+            font-size: 11px;
+            font-weight: 800;
+            line-height: 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+         }
+         .notification-panel {
+            position: absolute;
+            top: calc(100% + 14px);
+            right: 0;
+            width: min(92vw, 380px);
+            border-radius: 18px;
+            border: 1px solid rgba(20, 40, 29, 0.12);
+            background: rgba(255, 253, 247, 0.98);
+            box-shadow: 0 24px 60px rgba(20, 40, 29, 0.18);
+            overflow: hidden;
+            display: none;
+            z-index: 70;
+         }
+         .notification-panel[data-open="true"] {
+            display: block;
+         }
+         .notification-item {
+            display: block;
+            padding: 14px 16px;
+            border-top: 1px solid rgba(20, 40, 29, 0.08);
+            transition: background-color 0.2s ease;
+         }
+         .notification-item:hover {
+            background: rgba(229, 217, 182, 0.18);
+         }
+         .notification-item-unread {
+            background: rgba(98, 129, 65, 0.08);
+         }
+         .notification-empty {
+            padding: 24px 18px;
+            text-align: center;
+            color: var(--muted);
+         }
       </style>
       <!-- Leaflet.js CSS -->
       <link
          rel="stylesheet"
          href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+      {% block extra_head %}{% endblock %}
    </head>
    <body class="m-0 p-0 min-h-screen flex flex-col text-[var(--text)]">
       <!-- Navbar -->
@@ -48,7 +116,7 @@
             <a
                href="{% url 'home' %}"
                class="flex items-center gap-2 text-white font-bold text-xl md:text-2xl hover:opacity-80 transition duration-200">
-               <span class="text-3xl">📋</span>
+               <span class="text-3xl"></span>
                <span class="hidden sm:inline">Şikayet Sistemi</span>
                <span class="sm:hidden">Şikayetler</span>
             </a>
@@ -60,21 +128,21 @@
                      <a
                         href="{% url 'home' %}"
                         class="text-white px-4 py-2 rounded-lg hover:bg-[var(--color-secondary)] transition duration-200 font-medium">
-                        🏠 Ana Sayfa
+                         Ana Sayfa
                      </a>
                   </li>
                   <li>
                      <a
                         href="{% url 'complaint_list' %}"
                         class="text-white px-4 py-2 rounded-lg hover:bg-[var(--color-secondary)] transition duration-200 font-medium">
-                        📝 Şikayetler
+                         Şikayetler
                      </a>
                   </li>
                   <li>
                      <a
                         href="{% url 'complaint_create' %}"
                         class="text-white px-4 py-2 rounded-lg hover:bg-[var(--color-secondary)] transition duration-200 font-medium">
-                        ➕ Yeni Şikayet
+                         Yeni Şikayet
                      </a>
                   </li>
                   {% if user.is_authenticated %} {% if user.is_admin_user %}
@@ -82,7 +150,7 @@
                      <a
                         href="{% url 'admin_dashboard' %}"
                         class="text-white px-4 py-2 rounded-lg hover:bg-[var(--color-secondary)] transition duration-200 font-medium">
-                        🔐 Yönetici Paneli
+                         Yönetici Paneli
                      </a>
                   </li>
                   {% endif %}
@@ -90,14 +158,14 @@
                      <a
                         href="{% url 'user_profile' %}"
                         class="text-white px-4 py-2 rounded-lg hover:bg-[var(--color-secondary)] transition duration-200 font-medium">
-                        👤 {{ user.first_name|default:user.username }}
+                         {{ user.first_name|default:user.username }}
                      </a>
                   </li>
                   <li>
                      <a
                         href="{% url 'user_logout' %}"
                         class="text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-200 font-medium">
-                        🚪 Çıkış
+                         Çıkış
                      </a>
                   </li>
                   {% else %}
@@ -105,18 +173,91 @@
                      <a
                         href="{% url 'user_login' %}"
                         class="text-white px-4 py-2 rounded-lg hover:bg-[var(--color-secondary)] transition duration-200 font-medium">
-                        🔓 Giriş
+                         Giriş
                      </a>
                   </li>
                   <li>
                      <a
                         href="{% url 'user_register' %}"
                         class="text-white px-4 py-2 rounded-lg hover:bg-[var(--color-secondary)] transition duration-200 font-medium">
-                        ✍️ Kayıt
+                         Kayıt
                      </a>
                   </li>
                   {% endif %}
                </ul>
+
+               {% if user.is_authenticated %}
+               <div class="notification-shell">
+                  <button
+                     type="button"
+                     class="notification-trigger"
+                     data-notification-toggle
+                     aria-label="Bildirimleri aç"
+                     aria-expanded="false">
+                     <svg
+                        class="w-6 h-6"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path
+                           stroke-linecap="round"
+                           stroke-linejoin="round"
+                           stroke-width="2"
+                           d="M15 17h5l-1.4-1.4A2 2 0 0118 14.17V11a6 6 0 10-12 0v3.17c0 .53-.21 1.04-.59 1.43L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                     </svg>
+                     {% if header_unread_notifications_count %}
+                     <span class="notification-badge">
+                        {% if header_unread_notifications_count > 9 %}9+{% else %}{{ header_unread_notifications_count }}{% endif %}
+                     </span>
+                     {% endif %}
+                  </button>
+
+                  <div class="notification-panel" data-notification-panel data-open="false">
+                     <div class="flex items-center justify-between px-4 py-4 bg-[var(--card)]">
+                        <div>
+                           <p class="text-sm font-semibold text-[var(--muted)]">Bildirimler</p>
+                           <h3 class="text-lg font-bold text-[var(--text)]">Son güncellemeler</h3>
+                        </div>
+                        {% if header_notifications %}
+                        <form method="post" action="{% url 'mark_notifications_read' %}">
+                           {% csrf_token %}
+                           <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                           <button
+                              type="submit"
+                              class="text-xs font-bold text-[var(--color-primary)] hover:text-[var(--color-secondary)] transition">
+                              Tümünü okundu yap
+                           </button>
+                        </form>
+                        {% endif %}
+                     </div>
+
+                     {% if header_notifications %}
+                        <div class="max-h-[420px] overflow-y-auto">
+                           {% for notification in header_notifications %}
+                           <a
+                              href="{% if notification.complaint %}{% url 'complaint_detail' notification.complaint.pk %}{% else %}#{% endif %}"
+                              class="notification-item {% if not notification.is_read %}notification-item-unread{% endif %}">
+                              <div class="flex items-start justify-between gap-4">
+                                 <div class="min-w-0">
+                                    <p class="text-sm font-bold text-[var(--text)]">{{ notification.title }}</p>
+                                    <p class="mt-1 text-sm leading-5 text-[var(--muted)]">{{ notification.message }}</p>
+                                 </div>
+                                 {% if not notification.is_read %}
+                                 <span class="mt-1 h-2.5 w-2.5 rounded-full bg-[var(--color-accent)] shrink-0"></span>
+                                 {% endif %}
+                              </div>
+                              <p class="mt-2 text-xs text-gray-500">{{ notification.created_at|date:"d.m.Y H:i" }}</p>
+                           </a>
+                           {% endfor %}
+                        </div>
+                     {% else %}
+                        <div class="notification-empty">
+                           Henüz bildiriminiz yok.
+                        </div>
+                     {% endif %}
+                  </div>
+               </div>
+               {% endif %}
 
                <!-- Mobile Menu Toggle (Hamburger) -->
                <button
@@ -140,6 +281,19 @@
 
       <!-- Main Content -->
       <main class="flex-1 w-full max-w-7xl mx-auto px-4 lg:px-0 py-8 pt-24">
+         {% if messages %}
+         <div class="mb-4 space-y-2">
+            {% for message in messages %}
+            <div class="p-4 rounded-lg border font-medium
+               {% if message.tags == 'success' %}bg-green-50 border-green-300 text-green-800
+               {% elif message.tags == 'error' %}bg-red-50 border-red-300 text-red-800
+               {% elif message.tags == 'warning' %}bg-yellow-50 border-yellow-300 text-yellow-800
+               {% else %}bg-blue-50 border-blue-300 text-blue-800{% endif %}">
+               {{ message }}
+            </div>
+            {% endfor %}
+         </div>
+         {% endif %}
          {% block content %}{% endblock %}
       </main>
 
@@ -151,7 +305,7 @@
                <!-- About Section -->
                <div>
                   <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
-                     <span class="text-2xl">📋</span> Şikayet Sistemi
+                     <span class="text-2xl"></span> Şikayet Sistemi
                   </h3>
                   <p class="text-gray-200 text-sm leading-relaxed">
                      Yerel sorunları bildirin ve topluluk tarafından desteklenen
@@ -199,7 +353,7 @@
                   <h4 class="text-lg font-bold mb-4">İletişim</h4>
                   <ul class="space-y-2 text-sm text-gray-200">
                      <li>
-                        📧
+                        
                         <a
                            href="mailto:info@sikayetsistemi.com"
                            class="hover:text-white transition"
@@ -207,14 +361,14 @@
                         >
                      </li>
                      <li>
-                        📞
+                        
                         <a
                            href="tel:+905551234567"
                            class="hover:text-white transition"
                            >+90 555 123 4567</a
                         >
                      </li>
-                     <li>🕐 Pazartesi - Cuma: 09:00 - 17:00</li>
+                     <li> Pazartesi - Cuma: 09:00 - 17:00</li>
                   </ul>
                </div>
             </div>
@@ -242,6 +396,32 @@
 
       <!-- Leaflet.js Script -->
       <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+      <script>
+         document.addEventListener("DOMContentLoaded", function () {
+            const toggle = document.querySelector("[data-notification-toggle]");
+            const panel = document.querySelector("[data-notification-panel]");
+
+            if (!toggle || !panel) {
+               return;
+            }
+
+            toggle.addEventListener("click", function (event) {
+               event.stopPropagation();
+               const isOpen = panel.getAttribute("data-open") === "true";
+               panel.setAttribute("data-open", String(!isOpen));
+               toggle.setAttribute("aria-expanded", String(!isOpen));
+            });
+
+            panel.addEventListener("click", function (event) {
+               event.stopPropagation();
+            });
+
+            document.addEventListener("click", function () {
+               panel.setAttribute("data-open", "false");
+               toggle.setAttribute("aria-expanded", "false");
+            });
+         });
+      </script>
 
       {% block extra_js %}{% endblock %}
    </body>
