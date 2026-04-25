@@ -103,7 +103,7 @@ class ComplaintDetailView(DetailView):
             context['category_choices'] = Complaint.CATEGORY_CHOICES
         return context
 
-class ComplaintCreateView(CreateView):
+class ComplaintCreateView(LoginRequiredMixin, CreateView):
     """Yeni şikayet oluştur"""
     model = Complaint
     form_class = ComplaintForm
