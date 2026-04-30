@@ -81,12 +81,12 @@ class ComplaintListView(ListView):
         context['selected_priority'] = self.request.GET.get('priority', '')
         context['selected_category'] = self.request.GET.get('category', '')
 
-        all_complaints = Complaint.objects.filter(
+        filtered_complaints = self.get_queryset().filter(
             latitude__isnull=False,
             longitude__isnull=False
         ).values('id', 'title', 'description', 'district', 'category', 'priority', 'latitude', 'longitude')
 
-        context['complaints_json'] = json.dumps(list(all_complaints), cls=DjangoJSONEncoder)
+        context['complaints_json'] = json.dumps(list(filtered_complaints), cls=DjangoJSONEncoder)
         return context
 
 class ComplaintDetailView(DetailView):
