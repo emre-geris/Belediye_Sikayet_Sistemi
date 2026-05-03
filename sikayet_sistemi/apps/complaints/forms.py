@@ -13,6 +13,10 @@ class ComplaintForm(forms.ModelForm):
             'id': 'district-select'
         })
     )
+    city = forms.CharField(
+        initial='İstanbul',
+        widget=forms.HiddenInput()
+    )
     
     class Meta:
         model = Complaint
@@ -29,10 +33,6 @@ class ComplaintForm(forms.ModelForm):
             }),
             'category': forms.Select(attrs={
                 'class': 'w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2'
-            }),
-            'city': forms.TextInput(attrs={
-                'class': 'w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2',
-                'placeholder': 'İl giriniz...'
             }),
             'address': forms.Textarea(attrs={
                 'class': 'w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2',

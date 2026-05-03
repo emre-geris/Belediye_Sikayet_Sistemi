@@ -7,12 +7,11 @@ import django
 
 # Setup Django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
-# Add the sikayet_sistemi directory to path so apps modules can be imported
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "sikayet_sistemi"))
+sys.path.insert(0, "/c/Users/emreg/OneDrive/Desktop/sikayet_sistemi/sikayet_sistemi")
 django.setup()
 
-from apps.complaints.models import Complaint  # type: ignore[import-untyped]
-from apps.users.models import CustomUser  # type: ignore[import-untyped]
+from apps.complaints.models import Complaint  # type: ignore[import-not-found]
+from apps.users.models import CustomUser  # type: ignore[import-not-found]
 
 # Eski test şikayetlerini temizle
 Complaint.objects.filter(title__contains="Maltepe").delete()

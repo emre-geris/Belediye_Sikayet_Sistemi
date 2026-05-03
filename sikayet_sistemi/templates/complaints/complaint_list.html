@@ -54,50 +54,10 @@
                   name="status"
                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary)] focus:border-transparent transition">
                   <option value="">Tüm durumlar</option>
-                  <option
-                     value="new"
-                     {%
-                     if
-                     selected_status=""
-                     ="new"
-                     %}selected{%
-                     endif
-                     %}>
-                     Yeni
-                  </option>
-                  <option
-                     value="in_progress"
-                     {%
-                     if
-                     selected_status=""
-                     ="in_progress"
-                     %}selected{%
-                     endif
-                     %}>
-                     İnceleniyor
-                  </option>
-                  <option
-                     value="resolved"
-                     {%
-                     if
-                     selected_status=""
-                     ="resolved"
-                     %}selected{%
-                     endif
-                     %}>
-                     Çözüldü
-                  </option>
-                  <option
-                     value="rejected"
-                     {%
-                     if
-                     selected_status=""
-                     ="rejected"
-                     %}selected{%
-                     endif
-                     %}>
-                     Reddedildi
-                  </option>
+                  <option value="new" {% if selected_status == "new" %}selected{% endif %}>Yeni</option>
+                  <option value="in_progress" {% if selected_status == "in_progress" %}selected{% endif %}>İnceleniyor</option>
+                  <option value="resolved" {% if selected_status == "resolved" %}selected{% endif %}>Çözüldü</option>
+                  <option value="rejected" {% if selected_status == "rejected" %}selected{% endif %}>Reddedildi</option>
                </select>
             </div>
 
@@ -113,50 +73,10 @@
                   name="priority"
                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary)] focus:border-transparent transition">
                   <option value="">Tüm öncelikler</option>
-                  <option
-                     value="low"
-                     {%
-                     if
-                     selected_priority=""
-                     ="low"
-                     %}selected{%
-                     endif
-                     %}>
-                     Düşük
-                  </option>
-                  <option
-                     value="medium"
-                     {%
-                     if
-                     selected_priority=""
-                     ="medium"
-                     %}selected{%
-                     endif
-                     %}>
-                     Orta
-                  </option>
-                  <option
-                     value="high"
-                     {%
-                     if
-                     selected_priority=""
-                     ="high"
-                     %}selected{%
-                     endif
-                     %}>
-                     Yüksek
-                  </option>
-                  <option
-                     value="urgent"
-                     {%
-                     if
-                     selected_priority=""
-                     ="urgent"
-                     %}selected{%
-                     endif
-                     %}>
-                     Acil
-                  </option>
+                  <option value="low" {% if selected_priority == "low" %}selected{% endif %}>Düşük</option>
+                  <option value="medium" {% if selected_priority == "medium" %}selected{% endif %}>Orta</option>
+                  <option value="high" {% if selected_priority == "high" %}selected{% endif %}>Yüksek</option>
+                  <option value="urgent" {% if selected_priority == "urgent" %}selected{% endif %}>Acil</option>
                </select>
             </div>
 
@@ -172,72 +92,12 @@
                   name="category"
                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary)] focus:border-transparent transition">
                   <option value="">Tüm kategoriler</option>
-                  <option
-                     value="infrastructure"
-                     {%
-                     if
-                     selected_category=""
-                     ="infrastructure"
-                     %}selected{%
-                     endif
-                     %}>
-                     Altyapı
-                  </option>
-                  <option
-                     value="traffic"
-                     {%
-                     if
-                     selected_category=""
-                     ="traffic"
-                     %}selected{%
-                     endif
-                     %}>
-                     Trafik
-                  </option>
-                  <option
-                     value="pothole"
-                     {%
-                     if
-                     selected_category=""
-                     ="pothole"
-                     %}selected{%
-                     endif
-                     %}>
-                     Çukur
-                  </option>
-                  <option
-                     value="water"
-                     {%
-                     if
-                     selected_category=""
-                     ="water"
-                     %}selected{%
-                     endif
-                     %}>
-                     Su Kaçağı
-                  </option>
-                  <option
-                     value="trash"
-                     {%
-                     if
-                     selected_category=""
-                     ="trash"
-                     %}selected{%
-                     endif
-                     %}>
-                     Çöp
-                  </option>
-                  <option
-                     value="other"
-                     {%
-                     if
-                     selected_category=""
-                     ="other"
-                     %}selected{%
-                     endif
-                     %}>
-                     Diğer
-                  </option>
+                  <option value="infrastructure" {% if selected_category == "infrastructure" %}selected{% endif %}>Altyapı</option>
+                  <option value="traffic" {% if selected_category == "traffic" %}selected{% endif %}>Trafik</option>
+                  <option value="pothole" {% if selected_category == "pothole" %}selected{% endif %}>Çukur</option>
+                  <option value="water" {% if selected_category == "water" %}selected{% endif %}>Su Kaçağı</option>
+                  <option value="trash" {% if selected_category == "trash" %}selected{% endif %}>Çöp</option>
+                  <option value="other" {% if selected_category == "other" %}selected{% endif %}>Diğer</option>
                </select>
             </div>
 
@@ -261,7 +121,7 @@
       <div class="bg-[var(--card)] p-4 rounded-2xl shadow-md border border-gray-100 mb-8">
          <h2 class="text-lg font-bold text-[var(--color-primary)] mb-4"> Şikayet Haritası</h2>
          <div id="complaint-map"
-            data-complaints="{{ complaints_json }}"
+            data-complaints='{{ complaints_json|escape }}'
             style="height: 450px; border-radius: 12px;">
          </div>
       </div>

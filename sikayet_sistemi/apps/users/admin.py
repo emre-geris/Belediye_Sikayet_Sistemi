@@ -1,14 +1,12 @@
-from typing import Any, Tuple
-
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.contrib.auth.admin import UserAdmin
 
 from .models import CustomUser
 
 
 @admin.register(CustomUser)
-class CustomUserAdmin(BaseUserAdmin):
-    fieldsets: Tuple[Any, ...] = BaseUserAdmin.fieldsets + (  # type: ignore[assignment]
+class CustomUserAdmin(UserAdmin):
+    fieldsets = list(UserAdmin.fieldsets) + [
         (
             "Ek Bilgiler",
             {
@@ -22,7 +20,7 @@ class CustomUserAdmin(BaseUserAdmin):
                 )
             },
         ),
-    )
+    ]  # type: ignore[assignment]
     list_display = (
         "username",
         "email",

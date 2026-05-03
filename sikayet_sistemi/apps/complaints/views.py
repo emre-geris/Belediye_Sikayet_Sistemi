@@ -1,8 +1,8 @@
 import json
-from typing import TYPE_CHECKING
 
 from apps.users.utils import create_status_notification
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
@@ -12,9 +12,6 @@ from django.views.generic import CreateView, DetailView, ListView
 
 from .forms import ComplaintForm
 from .models import Complaint
-
-if TYPE_CHECKING:
-    pass
 
 
 def home(request):
@@ -100,21 +97,23 @@ class ComplaintListView(ListView):
         context["selected_priority"] = self.request.GET.get("priority", "")
         context["selected_category"] = self.request.GET.get("category", "")
 
-        all_complaints = Complaint.objects.filter(
-            latitude__isnull=False, longitude__isnull=False
-        ).values(
-            "id",
-            "title",
-            "description",
-            "district",
-            "category",
-            "priority",
-            "latitude",
-            "longitude",
+        filtered_complaints = (
+            self.get_queryset()
+            .filter(latitude__isnull=False, longitude__isnull=False)
+            .values(
+                "id",
+                "title",
+                "description",
+                "district",
+                "category",
+                "priority",
+                "latitude",
+                "longitude",
+            )
         )
 
         context["complaints_json"] = json.dumps(
-            list(all_complaints), cls=DjangoJSONEncoder
+            list(filtered_complaints), cls=DjangoJSONEncoder
         )
         return context
 
@@ -128,18 +127,18 @@ class ComplaintDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        user = self.request.user
-        if user.is_authenticated:
-            from apps.users.models import CustomUser
-
-            if isinstance(user, CustomUser) and user.is_admin_user():
-                context["status_choices"] = Complaint.STATUS_CHOICES
-                context["priority_choices"] = Complaint.PRIORITY_CHOICES
-                context["category_choices"] = Complaint.CATEGORY_CHOICES
+        if (
+            self.request.user.is_authenticated
+            and hasattr(self.request.user, "is_admin_user")
+            and self.request.user.is_admin_user()  # type: ignore[attr-defined]
+        ):
+            context["status_choices"] = Complaint.STATUS_CHOICES
+            context["priority_choices"] = Complaint.PRIORITY_CHOICES
+            context["category_choices"] = Complaint.CATEGORY_CHOICES
         return context
 
 
-class ComplaintCreateView(CreateView):
+class ComplaintCreateView(LoginRequiredMixin, CreateView):
     """Yeni şikayet oluştur"""
 
     model = Complaint
@@ -180,14 +179,7 @@ class ComplaintCreateView(CreateView):
 
 @require_http_methods(["POST"])
 def complaint_admin_update(request, pk):
-    from apps.users.models import CustomUser
-
-    user = request.user
-    if (
-        not user.is_authenticated
-        or not isinstance(user, CustomUser)
-        or not user.is_admin_user()
-    ):
+    if not request.user.is_authenticated or not request.user.is_admin_user():
         messages.error(request, "Bu işlem için yetkiniz yok.")
         return redirect("admin_login")
 
@@ -225,14 +217,7 @@ def complaint_admin_update(request, pk):
 
 @require_http_methods(["POST"])
 def complaint_update_status(request, pk):
-    from apps.users.models import CustomUser
-
-    user = request.user
-    if (
-        not user.is_authenticated
-        or not isinstance(user, CustomUser)
-        or not user.is_admin_user()
-    ):
+    if not request.user.is_authenticated or not request.user.is_admin_user():
         messages.error(request, "Bu işlem için yetkiniz yok.")
         return redirect("admin_login")
 

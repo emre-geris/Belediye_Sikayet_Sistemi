@@ -42,7 +42,14 @@ def user_login(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            messages.success(request, f"Hoş geldiniz, {user.first_name}!")  # type: ignore[union-attr]
+            user_name = (
+                user.first_name
+                if user and user.first_name
+                else user.username
+                if user
+                else "Kullanıcı"
+            )
+            messages.success(request, f"Hoş geldiniz, {user_name}!")
             next_page = request.GET.get("next", "home")
             return redirect(next_page)
     else:
@@ -76,7 +83,14 @@ def admin_login(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            messages.success(request, f"Hoş geldiniz, {user.first_name}!")  # type: ignore[union-attr]
+            user_name = (
+                user.first_name
+                if user and user.first_name
+                else user.username
+                if user
+                else "Yönetici"
+            )
+            messages.success(request, f"Hoş geldiniz, {user_name}!")
             next_page = request.GET.get("next", "admin_dashboard")
             return redirect(next_page)
     else:
