@@ -17,12 +17,14 @@ class Complaint(models.Model):
     ]
 
     CATEGORY_CHOICES = [
-        ('infrastructure', 'Altyapı'),
-        ('traffic', 'Trafik'),
-        ('pothole', 'Çukur'),
-        ('water', 'Su Kaçağı'),
-        ('trash', 'Çöp'),
-        ('other', 'Diğer'),
+        ('security', 'Güvenlik ve İstismar'),
+        ('infrastructure', 'Yapı ve Altyapı'),
+        ('water', 'Su ve Kanalizasyon'),
+        ('environment', 'Çevre ve Temizlik'),
+        ('traffic', 'Ulaşım ve Trafik'),
+        ('public_order', 'Zabıta ve Kamu Düzeni'),
+        ('veterinary', 'Veterinerlik'),
+        ('other', 'Genel / Diğer'),
     ]
 
     title = models.CharField(

@@ -10,7 +10,28 @@ from .models import Complaint
 from .forms import ComplaintForm
 from apps.users.utils import create_status_notification
 import json
+import logging
+import threading
 from django.core.serializers.json import DjangoJSONEncoder
+from NLP.llm_classifier import process_complaint, ACILIYET_TO_PRIORITY, KATEGORI_TO_CATEGORY
+
+logger = logging.getLogger(__name__)
+
+
+def _classify_async(complaint_id: int, text: str):
+    try:
+        llm_result = process_complaint(text)
+        priority = ACILIYET_TO_PRIORITY.get(llm_result.get("aciliyet"), "medium")
+        category = KATEGORI_TO_CATEGORY.get(llm_result.get("kategori"), "other")
+        Complaint.objects.filter(pk=complaint_id).update(priority=priority, category=category)
+        if llm_result.get("needs_human_review"):
+            logger.warning(
+                "Düşük güven skoru (%.2f) — insan onayı önerilir: %s",
+                llm_result.get("confidence_score", 0),
+                text[:80],
+            )
+    except Exception as e:
+        logger.warning("LLM sınıflandırma başarısız (async): %s", e)
 
 def home(request):
     """Ana sayfa - İstatistikleri göster"""
@@ -110,27 +131,21 @@ class ComplaintCreateView(CreateView):
     template_name = 'complaints/complaint_form.html'
     success_url = reverse_lazy('complaint_list')
 
-    def post(self, request, *args, **kwargs):
-        # 1. Gelen form verilerini kopyalıyoruz
-        data = request.POST.copy()
-        
-        # 2. ÖNEMLİ: Eğer 'priority' (öncelik) seçilmemişse manuel olarak 'medium' atıyoruz
-        # Bu işlem formun 'is_valid' kontrolünden ÖNCE gerçekleştiği için hatayı engeller.
-        if not data.get('priority'):
-            data['priority'] = 'medium'
-        
-        # 3. Düzenlenmiş veriyi Django'nun orijinal POST verisiyle değiştiriyoruz
-        request.POST = data
-        # 4. Şimdi formu normal şekilde işleyebiliriz
-        return super().post(request, *args, **kwargs)
-    # Form doğrulama ve hata durumlarını loglamak için form_valid ve form_invalid metodlarını override ediyoruz
-
     def form_valid(self, form):
-        # Kullanıcıyı bağla
-        
         form.instance.user = self.request.user if self.request.user.is_authenticated else None
-        print("\n>>> BAŞARI: Form doğrulandı ve kaydediliyor... <<<")
-        return super().form_valid(form)
+        form.instance.priority = "medium"
+        form.instance.category = "other"
+
+        response = super().form_valid(form)
+
+        complaint_text = f"{self.object.title} {self.object.description}"
+        threading.Thread(
+            target=_classify_async,
+            args=(self.object.pk, complaint_text),
+            daemon=True,
+        ).start()
+
+        return response
 
     def form_invalid(self, form):
         print("\n!!! HATA: Form geçersiz! Detaylar: !!!")

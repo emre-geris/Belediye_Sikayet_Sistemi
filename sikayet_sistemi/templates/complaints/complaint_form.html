@@ -57,20 +57,9 @@ Sikayet Sistemi{% endblock %} {% block content %}
             </p>
          </div>
 
-         <!-- Category -->
-         <div class="mb-6">
-            <label
-               for="{{ form.category.id_for_label }}"
-               class="block text-sm font-bold text-[var(--color-primary)] mb-2">
-                Kategori
-               <span class="text-red-600">*</span>
-            </label>
-            {{ form.category }} {% for error in form.category.errors %}
-            <div
-               class="mt-2 text-sm text-red-600 font-medium flex items-center gap-1">
-               <span></span> {{ error }}
-            </div>
-            {% endfor %}
+         <!-- Category (LLM tarafından otomatik atanır) -->
+         <div class="mb-6 p-3 rounded-lg bg-[rgba(230,217,182,0.3)] border border-[var(--color-light)] text-sm text-[var(--muted)] flex items-center gap-2">
+            <span>Kategori ve öncelik, yapay zeka tarafından otomatik olarak belirlenir.</span>
          </div>
 
          <!-- Location Section -->
@@ -143,6 +132,8 @@ Sikayet Sistemi{% endblock %} {% block content %}
          <div class="flex flex-col sm:flex-row gap-3">
             <button
                type="submit"
+               id="submit-btn"
+               onclick="this.disabled=true; this.innerText='Gönderiliyor...'; this.form.submit();"
                class="flex-1 bg-[var(--color-primary)] text-white font-bold py-3 px-6 rounded-lg hover:opacity-90 transition duration-200 shadow-md flex items-center justify-center gap-2">
                 Şikayeti Kaydet
             </button>

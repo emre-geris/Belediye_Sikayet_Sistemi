@@ -16,7 +16,7 @@ class ComplaintForm(forms.ModelForm):
     
     class Meta:
         model = Complaint
-        fields = ['title', 'description', 'category', 'city', 'district', 'address', 'latitude', 'longitude', 'priority']
+        fields = ['title', 'description', 'city', 'district', 'address', 'latitude', 'longitude']
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2',
@@ -26,9 +26,6 @@ class ComplaintForm(forms.ModelForm):
                 'class': 'w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2',
                 'placeholder': 'Detaylı açıklama giriniz...',
                 'rows': 5
-            }),
-            'category': forms.Select(attrs={
-                'class': 'w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2'
             }),
             'city': forms.TextInput(attrs={
                 'class': 'w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2',
@@ -41,9 +38,6 @@ class ComplaintForm(forms.ModelForm):
             }),
             'latitude': forms.HiddenInput(),
             'longitude': forms.HiddenInput(),
-            'priority': forms.Select(attrs={
-                'class': 'w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2'
-            }),
         }
 
     def __init__(self, *args, **kwargs):
