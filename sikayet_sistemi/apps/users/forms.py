@@ -1,56 +1,72 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
+
 from .models import CustomUser
 
-INPUT_CSS = 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] bg-[var(--card)] text-[var(--text)]'
-TEXTAREA_CSS = INPUT_CSS + ' resize-none'
+INPUT_CSS = "w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] bg-[var(--card)] text-[var(--text)]"
+TEXTAREA_CSS = INPUT_CSS + " resize-none"
 
 
 class UserRegistrationForm(UserCreationForm):
     email = forms.EmailField(
-        widget=forms.EmailInput(attrs={'class': INPUT_CSS, 'placeholder': 'E-posta adresiniz'})
+        widget=forms.EmailInput(
+            attrs={"class": INPUT_CSS, "placeholder": "E-posta adresiniz"}
+        )
     )
     first_name = forms.CharField(
         max_length=150,
-        widget=forms.TextInput(attrs={'class': INPUT_CSS, 'placeholder': 'Adınız'})
+        widget=forms.TextInput(attrs={"class": INPUT_CSS, "placeholder": "Adınız"}),
     )
     last_name = forms.CharField(
         max_length=150,
-        widget=forms.TextInput(attrs={'class': INPUT_CSS, 'placeholder': 'Soyadınız'})
+        widget=forms.TextInput(attrs={"class": INPUT_CSS, "placeholder": "Soyadınız"}),
     )
     tc_id = forms.CharField(
         max_length=11,
-        widget=forms.TextInput(attrs={'class': INPUT_CSS, 'placeholder': '11 haneli TC Kimlik No'})
+        widget=forms.TextInput(
+            attrs={"class": INPUT_CSS, "placeholder": "11 haneli TC Kimlik No"}
+        ),
     )
     phone = forms.CharField(
         max_length=15,
-        widget=forms.TextInput(attrs={'class': INPUT_CSS, 'placeholder': 'Telefon numaranız'})
+        widget=forms.TextInput(
+            attrs={"class": INPUT_CSS, "placeholder": "Telefon numaranız"}
+        ),
     )
     address = forms.CharField(
         max_length=500,
-        widget=forms.Textarea(attrs={'class': TEXTAREA_CSS, 'placeholder': 'Adresiniz', 'rows': 3})
+        widget=forms.Textarea(
+            attrs={"class": TEXTAREA_CSS, "placeholder": "Adresiniz", "rows": 3}
+        ),
     )
 
     class Meta:
         model = CustomUser
         fields = (
-            'first_name',
-            'last_name',
-            'tc_id',
-            'email',
-            'phone',
-            'address',
-            'password1',
-            'password2',
+            "first_name",
+            "last_name",
+            "tc_id",
+            "email",
+            "phone",
+            "address",
+            "password1",
+            "password2",
         )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['password1'].widget.attrs.update({'class': INPUT_CSS, 'placeholder': 'Şifreniz'})
-        self.fields['password2'].widget.attrs.update({'class': INPUT_CSS, 'placeholder': 'Şifrenizi tekrar giriniz'})
+        self.fields["password1"].widget.attrs.update(
+            {"class": INPUT_CSS, "placeholder": "Şifreniz"}
+        )
+        self.fields["password2"].widget.attrs.update(
+            {"class": INPUT_CSS, "placeholder": "Şifrenizi tekrar giriniz"}
+        )
 
     def clean_tc_id(self):
-        tc_id = self.cleaned_data.get('tc_id')
+        tc_id = self.cleaned_data.get("tc_id")
+
+        if not tc_id or not isinstance(tc_id, str):
+            raise forms.ValidationError("TC kimlik numarası gerekli.")
 
         if not tc_id.isdigit():
             raise forms.ValidationError("TC sadece rakam olmalıdır.")
@@ -65,7 +81,11 @@ class UserRegistrationForm(UserCreationForm):
 
     def clean_phone(self):
         phone = self.cleaned_data.get("phone")
-        digits = ''.join(filter(str.isdigit, phone))
+
+        if not phone or not isinstance(phone, str):
+            raise forms.ValidationError("Telefon numarası gerekli.")
+
+        digits = "".join(filter(str.isdigit, phone))
 
         if len(digits) < 10:
             raise forms.ValidationError("Geçersiz telefon numarası.")
@@ -77,6 +97,8 @@ class UserRegistrationForm(UserCreationForm):
 
         # EMAIL'den username üret
         email = self.cleaned_data.get("email")
+        if not email or not isinstance(email, str):
+            raise forms.ValidationError("Email adresi gerekli.")
         username = email.split("@")[0]
 
         # Eğer aynı username varsa sonuna sayı ekle
@@ -98,8 +120,17 @@ class UserRegistrationForm(UserCreationForm):
 
 
 class UserLoginForm(forms.Form):
-    tc_id = forms.CharField(max_length=11, widget=forms.TextInput(attrs={'class': INPUT_CSS, 'placeholder': 'TC Kimlik Numaranız'}))
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': INPUT_CSS, 'placeholder': 'Şifreniz'}))
+    tc_id = forms.CharField(
+        max_length=11,
+        widget=forms.TextInput(
+            attrs={"class": INPUT_CSS, "placeholder": "TC Kimlik Numaranız"}
+        ),
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={"class": INPUT_CSS, "placeholder": "Şifreniz"}
+        )
+    )
 
     def clean(self):
         cleaned_data = super().clean()
@@ -124,8 +155,17 @@ class UserLoginForm(forms.Form):
 
 
 class AdminLoginForm(forms.Form):
-    tc_id = forms.CharField(max_length=11, widget=forms.TextInput(attrs={'class': INPUT_CSS, 'placeholder': 'TC Kimlik Numaranız'}))
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': INPUT_CSS, 'placeholder': 'Şifreniz'}))
+    tc_id = forms.CharField(
+        max_length=11,
+        widget=forms.TextInput(
+            attrs={"class": INPUT_CSS, "placeholder": "TC Kimlik Numaranız"}
+        ),
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={"class": INPUT_CSS, "placeholder": "Şifreniz"}
+        )
+    )
 
     def clean(self):
         cleaned_data = super().clean()
@@ -134,7 +174,9 @@ class AdminLoginForm(forms.Form):
 
         if tc_id and password:
             try:
-                user = CustomUser.objects.get(tc_id=tc_id, user_type__in=['admin', 'system_admin'])
+                user = CustomUser.objects.get(
+                    tc_id=tc_id, user_type__in=["admin", "system_admin"]
+                )
             except CustomUser.DoesNotExist:
                 raise forms.ValidationError("Çalışan bilgileri hatalı.")
 
