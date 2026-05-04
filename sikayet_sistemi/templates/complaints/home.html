@@ -64,44 +64,36 @@ Sistemi{% endblock %} {% block content %}
    </aside>
 
    <article class="card p-5 space-y-4 bg-card rounded-xl">
-      <h3 class="text-lg font-extrabold text-primary">Son Şikayetler</h3>
-      {% if recent_complaints %} {% for complaint in recent_complaints %}
-      <div class="p-4 rounded-xl bg-card border border-primary/20">
-         <h4 class="text-base font-semibold mb-2">{{ complaint.title }}</h4>
-         {% if complaint.priority == 'urgent' %}
-         <span
-            class="inline-block px-2 py-1 text-xs font-bold rounded-full bg-accent text-white"
-            >Acil</span
-         >
-         {% elif complaint.priority == 'high' %}
-         <span
-            class="inline-block px-2 py-1 text-xs font-bold rounded-full bg-orange-700 text-white"
-            >Yüksek</span
-         >
-         {% elif complaint.priority == 'low' %}
-         <span
-            class="inline-block px-2 py-1 text-xs font-bold rounded-full bg-green-400 text-white"
-            >Düşük</span
-         >
-         {% else %}
-         <span
-            class="inline-block px-2 py-1 text-xs font-bold rounded-full bg-secondary text-white"
-            >Orta</span
-         >
-         {% endif %}
-         <p class="mt-2 text-sm leading-relaxed">
-            {{ complaint.description|truncatewords:20 }}
-         </p>
-         <div class="flex flex-wrap gap-3 mt-2 text-muted text-xs">
-            <span>{{ complaint.district }} / {{ complaint.city }}</span>
-            <a
-               href="{% url 'complaint_detail' complaint.id %}"
-               class="font-semibold text-accent hover:underline"
-               >Detay</a
-            >
+      <div class="flex items-center justify-between gap-4">
+         <h3 class="text-lg font-extrabold text-primary">Son Şikayetler</h3>
+         <div class="flex items-center gap-2">
+            <button id="recent-prev" type="button" class="py-2 px-3 rounded-full border border-primary text-primary hover:bg-primary/10 transition" disabled>&lt;</button>
+            <button id="recent-next" type="button" class="py-2 px-3 rounded-full border border-primary text-primary hover:bg-primary/10 transition" disabled>&gt;</button>
          </div>
       </div>
-      {% endfor %} {% else %}
+      {% if recent_complaints %}
+      <div id="recent-complaints" class="space-y-4">
+         {% for complaint in recent_complaints %}
+         <div class="recent-card p-4 rounded-xl bg-card border border-primary/20" data-index="{{ forloop.counter0 }}">
+            <h4 class="text-base font-semibold mb-2">{{ complaint.title }}</h4>
+            {% if complaint.priority == 'urgent' %}
+            <span class="inline-block px-2 py-1 text-xs font-bold rounded-full bg-accent text-white">Acil</span>
+            {% elif complaint.priority == 'high' %}
+            <span class="inline-block px-2 py-1 text-xs font-bold rounded-full bg-orange-700 text-white">Yüksek</span>
+            {% elif complaint.priority == 'low' %}
+            <span class="inline-block px-2 py-1 text-xs font-bold rounded-full bg-green-400 text-white">Düşük</span>
+            {% else %}
+            <span class="inline-block px-2 py-1 text-xs font-bold rounded-full bg-secondary text-white">Orta</span>
+            {% endif %}
+            <p class="mt-2 text-sm leading-relaxed">{{ complaint.description|truncatewords:20 }}</p>
+            <div class="flex flex-wrap gap-3 mt-2 text-muted text-xs">
+               <span>{{ complaint.district }} / {{ complaint.city }}</span>
+               <a href="{% url 'complaint_detail' complaint.id %}" class="font-semibold text-accent hover:underline">Detay</a>
+            </div>
+         </div>
+         {% endfor %}
+      </div>
+      {% else %}
       <p class="text-muted">Henüz kayıtlı şikayet yok.</p>
       {% endif %}
    </article>
@@ -109,5 +101,47 @@ Sistemi{% endblock %} {% block content %}
 
 <!-- Load map script -->
 <script src="{% static 'js/map.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+   const cards = Array.from(document.querySelectorAll('#recent-complaints .recent-card'));
+   const prev = document.getElementById('recent-prev');
+   const next = document.getElementById('recent-next');
+   const pageSize = 3;
+   let pageIndex = 0;
+
+   function updateControls() {
+      if (!cards.length) {
+         prev.disabled = true;
+         next.disabled = true;
+         return;
+      }
+      const maxPage = Math.max(0, Math.ceil(cards.length / pageSize) - 1);
+      prev.disabled = pageIndex <= 0;
+      next.disabled = pageIndex >= maxPage;
+   }
+
+   function renderPage() {
+      const start = pageIndex * pageSize;
+      const end = start + pageSize;
+      cards.forEach((card, index) => {
+         card.style.display = index >= start && index < end ? 'block' : 'none';
+      });
+      updateControls();
+   }
+
+   if (cards.length) {
+      prev.addEventListener('click', function () {
+         pageIndex = Math.max(0, pageIndex - 1);
+         renderPage();
+      });
+      next.addEventListener('click', function () {
+         const maxPage = Math.max(0, Math.ceil(cards.length / pageSize) - 1);
+         pageIndex = Math.min(maxPage, pageIndex + 1);
+         renderPage();
+      });
+      renderPage();
+   }
+});
+</script>
 
 {% endblock %}

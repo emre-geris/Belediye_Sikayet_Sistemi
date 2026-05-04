@@ -75,12 +75,20 @@ Sikayet Sistemi{% endblock %} {% block content %}
                <!-- City -->
                <div>
                   <label
-                     for="{{ form.city.id_for_label }}"
                      class="block text-sm font-bold text-[var(--color-primary)] mb-2">
                      İl
                      <span class="text-red-600">*</span>
                   </label>
-                  {{ form.city }} {% for error in form.city.errors %}
+                  <div>
+                     <input
+                        type="text"
+                        value="İstanbul"
+                        readonly
+                        class="w-full px-4 py-2 border rounded-lg bg-transparent text-gray-700 cursor-not-allowed pointer-events-none"
+                     />
+                     {{ form.city }}
+                  </div>
+                  {% for error in form.city.errors %}
                   <div
                      class="mt-2 text-sm text-red-600 font-medium flex items-center gap-1">
                      <span></span> {{ error }}

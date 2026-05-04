@@ -13,10 +13,14 @@ class ComplaintForm(forms.ModelForm):
             'id': 'district-select'
         })
     )
-    
+    city = forms.CharField(
+        initial='İstanbul',
+        widget=forms.HiddenInput()
+    )
+
     class Meta:
         model = Complaint
-        fields = ['title', 'description', 'city', 'district', 'address', 'latitude', 'longitude']
+        fields = ['title', 'description', 'category', 'city', 'district', 'address', 'latitude', 'longitude', 'priority']
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2',
@@ -27,9 +31,8 @@ class ComplaintForm(forms.ModelForm):
                 'placeholder': 'Detaylı açıklama giriniz...',
                 'rows': 5
             }),
-            'city': forms.TextInput(attrs={
-                'class': 'w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2',
-                'placeholder': 'İl giriniz...'
+            'category': forms.Select(attrs={
+                'class': 'w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2'
             }),
             'address': forms.Textarea(attrs={
                 'class': 'w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2',
@@ -38,13 +41,16 @@ class ComplaintForm(forms.ModelForm):
             }),
             'latitude': forms.HiddenInput(),
             'longitude': forms.HiddenInput(),
+            'priority': forms.Select(attrs={
+                'class': 'w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2'
+            }),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Add empty option at the beginning
         self.fields['district'].choices = [('', '-- İlçe Seçiniz --')] + get_district_choices()
-        
+
         # Make latitude and longitude optional since they're auto-populated
         self.fields['latitude'].required = False
         self.fields['longitude'].required = False
