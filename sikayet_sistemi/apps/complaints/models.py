@@ -79,6 +79,18 @@ class Complaint(models.Model):
         null=True,
         blank=True
     )
+    llm_reasoning = models.TextField(
+        blank=True, default="",
+        verbose_name="LLM Muhakemesi"
+    )
+    llm_confidence = models.FloatField(
+        null=True, blank=True,
+        verbose_name="LLM Güven Skoru"
+    )
+    llm_needs_review = models.BooleanField(
+        null=True, blank=True,
+        verbose_name="İnsan Onayı Gerekli"
+    )
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name="Oluşturulma Tarihi"

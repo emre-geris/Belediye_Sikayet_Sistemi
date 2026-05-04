@@ -82,6 +82,39 @@
                </div>
             </div>
 
+            <!-- LLM Analysis Section -->
+            {% if complaint.llm_confidence is not None %}
+            <div class="mb-8">
+               <h2 class="text-xl font-bold text-[var(--color-primary)] mb-4 flex items-center gap-2">
+                  Yapay Zeka Analizi
+                  {% if complaint.llm_needs_review %}
+                  <span class="text-xs bg-yellow-100 text-yellow-800 border border-yellow-300 px-2 py-0.5 rounded-full font-semibold">İnsan Onayı Önerilir</span>
+                  {% endif %}
+               </h2>
+               <div class="bg-indigo-50 p-6 rounded-xl border border-indigo-200 space-y-4">
+{% if complaint.llm_reasoning %}
+                  <div>
+                     <p class="text-xs font-semibold text-indigo-500 uppercase tracking-wide mb-1">Muhakeme</p>
+                     <p class="text-[var(--text)] leading-relaxed">{{ complaint.llm_reasoning }}</p>
+                  </div>
+                  {% endif %}
+                  <div class="flex items-center gap-2">
+                     <p class="text-xs font-semibold text-indigo-500 uppercase tracking-wide">Güven Skoru</p>
+                     <div class="flex-1 bg-indigo-200 rounded-full h-2">
+                        <div class="bg-indigo-600 h-2 rounded-full" style="width: {% widthratio complaint.llm_confidence 1 100 %}%"></div>
+                     </div>
+                     <span class="text-sm font-bold text-indigo-700">{% widthratio complaint.llm_confidence 1 100 %}%</span>
+                  </div>
+               </div>
+            </div>
+            {% elif complaint.created_at %}
+            <div class="mb-8">
+               <div class="bg-gray-50 p-4 rounded-xl border border-dashed border-gray-300 text-center text-sm text-[var(--muted)]">
+                  Yapay zeka analizi henüz tamamlanmadı...
+               </div>
+            </div>
+            {% endif %}
+
             <!-- Location Section -->
             <div class="mb-8">
                <h2 class="text-xl font-bold text-[var(--color-primary)] mb-4 flex items-center gap-2">

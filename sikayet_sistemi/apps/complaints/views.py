@@ -24,7 +24,17 @@ def _classify_async(complaint_id: int, text: str):
         llm_result = process_complaint(text)
         priority = ACILIYET_TO_PRIORITY.get(llm_result.get("aciliyet"), "medium")
         category = KATEGORI_TO_CATEGORY.get(llm_result.get("kategori"), "other")
-        Complaint.objects.filter(pk=complaint_id).update(priority=priority, category=category)
+        Complaint.objects.filter(pk=complaint_id).update(
+            priority=priority,
+            category=category,
+            llm_reasoning=llm_result.get("muhakeme", ""),
+llm_confidence=llm_result.get("confidence_score"),
+            llm_needs_review=llm_result.get("needs_human_review", False),
+        )
+        logger.info(
+            "LLM sınıflandırma tamamlandı #%d — kategori: %s, öncelik: %s, güven: %.2f",
+            complaint_id, category, priority, llm_result.get("confidence_score", 0),
+        )
         if llm_result.get("needs_human_review"):
             logger.warning(
                 "Düşük güven skoru (%.2f) — insan onayı önerilir: %s",
@@ -166,15 +176,10 @@ class ComplaintCreateView(LoginRequiredMixin, CreateView):
     template_name = "complaints/complaint_form.html"
     success_url = reverse_lazy("complaint_list")
 
-    def post(self, request, *args, **kwargs):
-        data = request.POST.copy()
-        if not data.get("priority"):
-            data["priority"] = "medium"
-        request.POST = data
-        return super().post(request, *args, **kwargs)
-
     def form_valid(self, form):
         form.instance.user = self.request.user if self.request.user.is_authenticated else None
+        form.instance.category = "other"
+        form.instance.priority = "medium"
         response = super().form_valid(form)
         complaint_text = f"{self.object.title} {self.object.description}"
         threading.Thread(
